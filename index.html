@@ -1,11 +1,30 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>Pokemon Typing Battle</title>
 </head>
-<body>
-	
+
+<!-- Main CSS -->
+<link rel="stylesheet" href="./assets/css/main.css" type="text/css">
+
+<body style="flex-direction: row;">
+	<button id="start-button" onclick="startGame()">Start</button>
+
+	<br />
+
+	<canvas id="game-board" width="800" height="450"></canvas>
+	<span id="score" style="font-size: 80pt;"></span>
+
+
+	<button id="stop-button" onclick="stopGame()">Stop</button>
+
+
+	<!-- Main JS -->
+	<script src="./assets/js/index.js"></script>
+
 </body>
+
 </html>
