@@ -13,12 +13,6 @@ const homeRowLetters = "asdfghjkl;'";
 
 var keyArray = homeRowLetters.split('');
 
-// keyArrMap = (keys) => {
-//     let keyArr = keys.split('');
-// console.log(keyArray)
-// }
-
-
 const draw = (obj, type) => {
     if (type === "tile2") {
         ctx.fillStyle = "black";
@@ -62,33 +56,32 @@ class Game {
         this.tileArray = [];
     }
 
-
     spawnTile() {
         let rKey = keyArray[Math.floor(Math.random() * keyArray.length)];
         let rX = Math.floor(Math.random() * (ctx.width - 80)) + 65;
         let rY = Math.floor(Math.random() * (ctx.height - 80)) + 25;
-        let rWidth = 45;
-        let rHeight = 45;
+        // let rWidth = 45;
+        // let rHeight = 45;
 
-        let newTile = new Tile(rKey, rX, rY, rWidth, rHeight);
+        let newTile = new Tile(rKey, rX, rY);
         this.tileArray.push(newTile);
     }
 }
 
-function checkKey(keyPress){
-    console.log(keyPress)
-    return theGame.tileArray.map((key, i)=>{
-        if(keyPress === key){
-            console.log(e.key,i)
+document.onkeydown = (e) => {
+    // console.log(theGame.tileArray)
+    theGame.tileArray.map((tile, i) => {
+        if (e.key == tile.key) {
+            // console.log(key,i)
             score += 1;
             document.getElementById("score").innerHTML = score;
+            theGame.tileArray.splice(i,1);
         }
     })
 }
 
-    document.onkeydown = (e) => {
-        checkKey(e.key)
-    }
+
+
 
 
 
@@ -100,7 +93,7 @@ function mainLoop() {
     })
 
     if (frames % 150 === 0 && theGame.tileArray.length < 1) theGame.spawnTile();
-console.log(theGame.tileArray.length)
+    console.log(theGame.tileArray.length)
     if (isPlaying === true) requestId = requestAnimationFrame(mainLoop);
 }
 
