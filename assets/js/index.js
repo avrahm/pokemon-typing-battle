@@ -20,13 +20,13 @@ function setSkillMode(skill) {
 
     switch (skill) {
         case "home":
-            letters = "ASDFGHJKL;'";
+            letters = "ASDFGHJKL"; //;'
             break;
         case "top":
             letters = "QWERTYUIOP"; //shift letters for hard mode :"
             break;
         case "bottom":
-            letters = "ZXCVBNM,./"; //shift letters for hard mode <>?
+            letters = "ZXCVBNM"; //,./shift letters for hard mode <>?
             break;
     }
 
@@ -100,8 +100,21 @@ class Game {
         }
 
         let newTile = new Tile(rKey, rX, rY, rWidth, rHeight);
+
         this.tileArray.push(newTile);
+        handleKeyboard(newTile, 'active');
+
     }
+}
+
+function handleKeyboard(tile, status) {
+
+    // console.log(tile.key)
+    // if (tile.key === (/A-Z/)) {
+        tile = tile.key.toLowerCase();
+    //     console.log(tile)
+    // }
+    document.getElementById(`${tile}`).setAttribute("class", `${status}Key`)
 }
 
 document.onkeydown = (e) => {
@@ -110,6 +123,7 @@ document.onkeydown = (e) => {
             manageLife('computer', -1)
             theGame.player.chargeAttack++
             handleChargeAttack('player', theGame.player.chargeAttack)
+            handleKeyboard(e,'deactive')
             theGame.tileArray.splice(i, 1);
         } else if (e.key.toUpperCase() !== tile.key) {
             manageLife('player', -1)

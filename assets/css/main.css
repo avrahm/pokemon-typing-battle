@@ -7,3 +7,15 @@
     padding: 30px;
     flex-direction: row;
 }
+
+.keyboard td {
+    border: 1px solid #dddddd;
+    padding: 30px;
+}
+
+.activeKey {
+    background-color: chocolate;
+}
+.deactiveKey {
+    background-color: none;
+}
