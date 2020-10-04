@@ -10,6 +10,12 @@ let score = 0;
 let frames = 0;
 let letters = '';
 
+let playerStartLife = 100;
+let computerStartLife = 100;
+
+let playerChargeAttackDamage = -50;
+let computerChargeAttackDamage = -20;
+
 function setSkillMode(skill) {
 
     switch (skill) {
@@ -48,6 +54,7 @@ const draw = (obj, type) => {
 class Player {
     constructor(life) {
         this.life = life;
+        this.chargeAttack = 0
     }
 }
 
@@ -68,8 +75,8 @@ class Tile {
 
 class Game {
     constructor() {
-        this.player = new Player(100);
-        this.computer = new Player(100);
+        this.player = new Player(playerStartLife);
+        this.computer = new Player(computerStartLife);
         this.tileArray = [];
     }
 
@@ -100,12 +107,14 @@ class Game {
 document.onkeydown = (e) => {
     theGame.tileArray.map((tile, i) => {
         if (e.key.toUpperCase() == tile.key) {
-            score += 1;
-            document.getElementById("score").innerHTML = score;
+            manageLife('computer', -1)
+            theGame.player.chargeAttack++
+            handleChargeAttack('player', theGame.player.chargeAttack)
             theGame.tileArray.splice(i, 1);
         } else if (e.key.toUpperCase() !== tile.key) {
-            score -= 1;
-            document.getElementById("score").innerHTML = score;
+            manageLife('player', -1)
+            theGame.computer.chargeAttack++
+            handleChargeAttack('computer', theGame.computer.chargeAttack)
         }
     })
 }
@@ -123,6 +132,35 @@ function mainLoop() {
     if (isPlaying === true) requestId = requestAnimationFrame(mainLoop);
 }
 
+function handleChargeAttack(user, chargeAttack) {
+
+    document.getElementById(`${user}Charge`).innerHTML = theGame[user].chargeAttack;
+    if (user === 'player') {
+
+        if (chargeAttack === 3) {
+            manageLife('computer', computerChargeAttackDamage)
+            theGame[user].chargeAttack = 0;
+            document.getElementById(`${user}Charge`).innerHTML = theGame[user].chargeAttack;
+        }
+    }
+    if (user === 'computer') {
+        if (chargeAttack === 5) {
+            manageLife('player', playerChargeAttackDamage)
+            theGame[user].chargeAttack = 0;
+            document.getElementById(`${user}Charge`).innerHTML = theGame[user].chargeAttack;
+        }
+    }
+}
+
+function setLife() {
+    manageLife('player', theGame.player.life);
+    manageLife('computer', theGame.computer.life);
+}
+
+function manageLife(user, damage) {
+    theGame[user].life += damage;
+    document.getElementById(`${user}Life`).innerHTML = theGame[user].life;
+}
 
 function stopGame() {
     isPlaying = false;
@@ -137,4 +175,5 @@ startGame = (skill) => {
     isPlaying = true;
     theGame = new Game()
     mainLoop();
+    setLife();
 }

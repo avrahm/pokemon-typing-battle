@@ -2,3 +2,8 @@
     background-color: wheat;
     border: 1px black solid ;
 }
+
+.life {
+    padding: 30px;
+    flex-direction: row;
+}
