@@ -1,5 +1,3 @@
-
-
 var ctx = document.getElementById("game-board").getContext("2d");
 ctx.width = 800;
 ctx.height = 450;
@@ -109,28 +107,99 @@ class Game {
 
 function handleKeyboard(tile, status) {
 
-    // console.log(tile.key)
-    // if (tile.key === (/A-Z/)) {
+    if (status === "active" || status === "deactive") {
+        // console.log(tile.key)
+        // if (tile.key === (/A-Z/)) {
         tile = tile.key.toLowerCase();
-    //     console.log(tile)
-    // }
-    document.getElementById(`${tile}`).setAttribute("class", `${status}Key`)
+        //     console.log(tile)
+        // }
+        document.getElementById(`${tile}`).setAttribute("class", `${status}Key`)
+    }
+
+    if (status === "reset") {
+        theGame.tileArray.map((tile, i) => {
+            theGame.tileArray.splice(i, 1);
+            document.getElementById(`${tile.key.toLowerCase()}`).setAttribute("class", `${status}Key`)
+            // document.getElementById(tile.key).setAttribute("class", `clear`)
+        })
+    }
 }
 
+//Score
 document.onkeydown = (e) => {
     theGame.tileArray.map((tile, i) => {
         if (e.key.toUpperCase() == tile.key) {
             manageLife('computer', -1)
             theGame.player.chargeAttack++
             handleChargeAttack('player', theGame.player.chargeAttack)
-            handleKeyboard(e,'deactive')
+            handleKeyboard(e, 'deactive')
             theGame.tileArray.splice(i, 1);
+            shake();
+            checkScore();
         } else if (e.key.toUpperCase() !== tile.key) {
             manageLife('player', -1)
             theGame.computer.chargeAttack++
             handleChargeAttack('computer', theGame.computer.chargeAttack)
+            shake();
+            checkScore();
         }
     })
+}
+
+function handleChargeAttack(user, chargeAttack) {
+    document.getElementById(`${user}Charge`).innerHTML = theGame[user].chargeAttack;
+    if (user === 'player') {
+        if (chargeAttack === 3) {
+            manageLife('computer', playerChargeAttackDamage)
+            theGame[user].chargeAttack = 0;
+            document.getElementById(`${user}Charge`).innerHTML = theGame[user].chargeAttack;
+        }
+    }
+    if (user === 'computer') {
+        if (chargeAttack === 5) {
+            manageLife('player', computerChargeAttackDamage)
+            theGame[user].chargeAttack = 0;
+            document.getElementById(`${user}Charge`).innerHTML = theGame[user].chargeAttack;
+        }
+    }
+}
+
+function checkScore(){
+    if(theGame.player.life <= 0){
+        console.log('Computer wins');
+        stopGame();
+    }
+    if(theGame.computer.life <= 0){
+        console.log('player wins!');
+        stopGame();
+    }
+}
+
+function shake() {
+    document.querySelector("canvas").classList.add("score-shake");
+    setTimeout(() => {
+        document.querySelector("canvas").classList.remove("score-shake");
+    }, 600);
+}
+
+function resetPlayers() {
+    ['player', 'computer'].map(user => {
+        // console.log(user)
+        manageLife(0, 0, 1);
+        theGame[user].chargeAttack = 0;
+        document.getElementById(`${user}Charge`).innerHTML = theGame[user].chargeAttack;
+    })
+}
+
+function manageLife(user, damage, reset = 0) {
+    if (reset) {
+        ['player', 'computer'].map(user => {
+            document.getElementById(`${user}Life`).innerHTML = theGame[user].life;
+        })
+    } else {
+        theGame[user].life += damage;
+        document.getElementById(`${user}Life`).innerHTML = theGame[user].life;
+    }
 }
 
 function mainLoop() {
@@ -140,54 +209,22 @@ function mainLoop() {
         draw(tile, "tile")
     })
 
-    if (frames % 150 === 0
-        && theGame.tileArray.length < 1
-    ) theGame.spawnTile();
+    if (frames % 150 === 0 && theGame.tileArray.length < 1) theGame.spawnTile();
     if (isPlaying === true) requestId = requestAnimationFrame(mainLoop);
-}
-
-function handleChargeAttack(user, chargeAttack) {
-
-    document.getElementById(`${user}Charge`).innerHTML = theGame[user].chargeAttack;
-    if (user === 'player') {
-
-        if (chargeAttack === 3) {
-            manageLife('computer', computerChargeAttackDamage)
-            theGame[user].chargeAttack = 0;
-            document.getElementById(`${user}Charge`).innerHTML = theGame[user].chargeAttack;
-        }
-    }
-    if (user === 'computer') {
-        if (chargeAttack === 5) {
-            manageLife('player', playerChargeAttackDamage)
-            theGame[user].chargeAttack = 0;
-            document.getElementById(`${user}Charge`).innerHTML = theGame[user].chargeAttack;
-        }
-    }
-}
-
-function setLife() {
-    manageLife('player', theGame.player.life);
-    manageLife('computer', theGame.computer.life);
-}
-
-function manageLife(user, damage) {
-    theGame[user].life += damage;
-    document.getElementById(`${user}Life`).innerHTML = theGame[user].life;
 }
 
 function stopGame() {
     isPlaying = false;
-
+    resetPlayers();
+    handleKeyboard(0, 'reset');
     /// kill any request in progress
     mainLoop ? cancelAnimationFrame : false;
 }
 
-
 startGame = (skill) => {
-    setSkillMode(skill);
     isPlaying = true;
-    theGame = new Game()
+    theGame = new Game();
+    setSkillMode(skill);
     mainLoop();
-    setLife();
+    manageLife(0, 0, 1);
 }
