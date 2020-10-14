@@ -1,6 +1,6 @@
 var ctx = document.getElementById("game-board").getContext("2d");
 ctx.width = 800;
-ctx.height = 450;
+ctx.height = 250;
 
 let isPlaying = false;
 let score = 0;
@@ -127,6 +127,7 @@ function handleKeyboard(tile, status) {
 
 //Score
 document.onkeydown = (e) => {
+    console.log(theGame.computer);
     theGame.tileArray.map((tile, i) => {
         if (e.key.toUpperCase() == tile.key) {
             manageLife('computer', -1)
@@ -227,4 +228,5 @@ startGame = (skill) => {
     setSkillMode(skill);
     mainLoop();
     manageLife(0, 0, 1);
+
 }

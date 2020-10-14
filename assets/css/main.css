@@ -1,3 +1,7 @@
+#sprite {
+    background-color: thistle;
+}
+
 #game-board {
     background-color: wheat;
     border: 1px black solid ;
