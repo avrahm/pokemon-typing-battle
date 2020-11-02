@@ -8,14 +8,19 @@ let score = 0;
 let frames = 0;
 let letters = '';
 
-let playerStartLife = 100;
-let computerStartLife = 100;
+let playerStartLife = 1000;
+let computerStartLife = 1000;
 
 let playerChargeAttackDamage = -50;
 let computerChargeAttackDamage = -20;
 
-let player1Attack = false
-let computerAttack = false
+let player1Attack = false;
+let computerAttack = false;
+
+let playerChargeAttackCounter = 1;
+let computerChargeAttackCounter = 4;
+
+let player1ImgAttack;
 
 let player1Img = new Image();
 player1Img.src = "assets/images/pikachu-sprite.png";
@@ -60,6 +65,7 @@ class Player {
         this.life = life;
         this.chargeAttack = 0
     }
+
 }
 
 class Tile {
@@ -82,6 +88,7 @@ class Game {
         this.player = new Player(playerStartLife);
         this.computer = new Player(computerStartLife);
         this.tileArray = [];
+        this.spriteArray = {};
     }
 
     spawnTile() {
@@ -106,11 +113,32 @@ class Game {
         let newTile = new Tile(rKey, rX, rY, rWidth, rHeight);
 
         this.tileArray.push(newTile);
-        handleKeyboard(newTile, 'active');
+        // handleKeyboard(newTile, 'active');
 
     }
 }
 
+
+function handleChargeAttack(user, chargeAttack) {
+    document.getElementById(`${user}Charge`).innerHTML = theGame[user].chargeAttack;
+    if (user === 'player') {
+        if (chargeAttack === playerChargeAttackCounter) {
+            manageLife('computer', playerChargeAttackDamage)
+            theGame[user].chargeAttack = 0;
+            document.getElementById(`${user}Charge`).innerHTML = theGame[user].chargeAttack;
+            
+        }
+    }
+    if (user === 'computer') {
+        if (chargeAttack === computerChargeAttackCounter) {
+            manageLife('player', computerChargeAttackDamage)
+            theGame[user].chargeAttack = 0;
+            document.getElementById(`${user}Charge`).innerHTML = theGame[user].chargeAttack;
+        }
+    }
+}
+
+//HANDLE KEYBOARD
 function handleKeyboard(tile, status) {
 
     if (status === "active" || status === "deactive") {
@@ -131,80 +159,27 @@ function handleKeyboard(tile, status) {
     }
 }
 
-//Score
+//HANDLE SCORE ON KEYDOWN
 document.onkeydown = (e) => {
-    console.log(theGame.computer);
+    // console.log(theGame.computer);
     theGame.tileArray.map((tile, i) => {
         if (e.key.toUpperCase() == tile.key) {
             manageLife('computer', -1)
             theGame.player.chargeAttack++
             handleChargeAttack('player', theGame.player.chargeAttack)
-            handleKeyboard(e, 'deactive')
+            // handleKeyboard(e, 'deactive')
             theGame.tileArray.splice(i, 1);
-            shake();
+            shakeScreen();
             checkScore();
         } else if (e.key.toUpperCase() !== tile.key) {
             manageLife('player', -1)
             theGame.computer.chargeAttack++
             handleChargeAttack('computer', theGame.computer.chargeAttack)
-            shake();
+            shakeScreen();
             checkScore();
         }
     })
-}
-
-
-let srcX = 0
-let counter = 0;
-let speed = 5;
-let canX = 0;
-function movingUpdateFrame(srcY, width, height, frames, rate = 0.4) {
-    console.log('something');
-    let multiply = rate
-    counter += multiply;
-    srcX = (Math.floor(counter) % frames) * width;
-    srcY = srcY;
-}
-
-
-function drawMovingImage(img, imgX, imgY, width, height, canX, canY, frames, move = false, rate) {
-
-    if (move) canX = (counter * speed)
-    movingUpdateFrame(imgY, width, height, frames, rate);
-    if (canX >= ctx.width) {
-        canX -= ctx.width;
-        console.log(canX);
-    }
-    ctx.drawImage(img, srcX + imgX, imgY, width, height, canX, canY, width, height)
-
-}
-
-playerAttack = (player) => {
-    switch (player) {
-        case player = "player1":
-            drawMovingImage(player1Img, 30, 135, 59, 40, 5, 5, 4, 1);
-        case player = "computer":
-            drawMovingImage(player1Img, 30, 135, 59, 40, 5, 5, 4, 1);
-    }
-}
-
-function handleChargeAttack(user, chargeAttack) {
-    document.getElementById(`${user}Charge`).innerHTML = theGame[user].chargeAttack;
-    if (user === 'player') {
-        if (chargeAttack === 3) {
-            manageLife('computer', playerChargeAttackDamage)
-            theGame[user].chargeAttack = 0;
-            document.getElementById(`${user}Charge`).innerHTML = theGame[user].chargeAttack;
-            player1Attack = true
-        }
-    }
-    if (user === 'computer') {
-        if (chargeAttack === 5) {
-            manageLife('player', computerChargeAttackDamage)
-            theGame[user].chargeAttack = 0;
-            document.getElementById(`${user}Charge`).innerHTML = theGame[user].chargeAttack;
-        }
-    }
+    console.log(e)
 }
 
 function checkScore() {
@@ -213,12 +188,12 @@ function checkScore() {
         stopGame();
     }
     if (theGame.computer.life <= 0) {
-        console.log('player wins!');
+        console.log('Player wins!');
         stopGame();
     }
 }
 
-function shake() {
+function shakeScreen() {
     document.querySelector("canvas").classList.add("score-shake");
     setTimeout(() => {
         document.querySelector("canvas").classList.remove("score-shake");
@@ -245,17 +220,12 @@ function manageLife(user, damage, reset = 0) {
     }
 }
 
-
 function mainLoop() {
     frames++;
     ctx.clearRect(0, 0, ctx.width, ctx.height);
     theGame.tileArray.forEach(tile => {
         draw(tile, "tile")
     })
-    if (player1Attack) playerAttack("player1")
-    // if (player2Attack) playerAttack()
-    // console.log(player1ImgAttack);
-    // if(player1ImgAttack.canX >= ctx.width) player1ImgAttack = null
 
     if (frames % 150 === 0 && theGame.tileArray.length < 1) theGame.spawnTile();
     if (isPlaying === true) requestId = requestAnimationFrame(mainLoop);
@@ -275,5 +245,4 @@ startGame = (skill) => {
     setSkillMode(skill);
     mainLoop();
     manageLife(0, 0, 1);
-
 }

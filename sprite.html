@@ -1,16 +1,59 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sprite</title>
 </head>
 <link rel="stylesheet" href="./assets/css/main.css" type="text/css">
-<body>
+<script type="text/javascript" src="./assets/js/sprite.js"></script>
 
-    <button onclick="start()">Start</button>
-    <button onclick="stop()">Stop</button><br>
-    <canvas id="sprite" width="500" height="500"></canvas>
-	<script src="./sprite.js"></script>
+
+<body style="flex: auto ;flex-direction: column;">
+    <button id="start-button" onclick="startGame('home')">Home Row</button>
+
+    <br />
+    <div class="life">
+        Player Life <span id="playerLife"> </span>
+        Computer <span id="computerLife"> </span>
+    </div>
+    <div class="charge">
+        Player Charge Attack <span id="playerCharge"> </span>
+        Computer Charge Attack <span id="computerCharge"> </span>
+    </div>
+    <br />
+    <div>
+        <canvas id="gamecanvas" width="800" height="250" style="border: 1px solid black; "></canvas>
+
+    </div>
+    <br />
+    <div>
+        <button type="button" onclick="game.pikachu.walk()">Walk</button>
+        <button type="button" onclick="game.pikachu.run()">Run</button>
+        <button type="button" onclick="game.pikachu.idle()">Idle</button>
+        <button type="button" onclick="game.pikachu.attack()">Shock</button>
+
+    </div>
+    <br />
+    <div>
+        <!-- <button type="button" onclick="game.charizard.walk()">Walk</button> -->
+        <button type="button" onclick="game.charizard.fly()">Fly</button>
+        <button type="button" onclick="game.charizard.idle()">Idle</button>
+        <button type="button" onclick="game.charizard.attack()">Attack</button>
+
+    </div>
+    <br />
+    <div>
+        <button id="stop-button" onclick="stopGame()">Stop</button>
+
+    </div>
+
+    <script>
+        window.addEventListener("load", () => {
+            game.init();
+        });
+    </script>
 </body>
+
 </html>
