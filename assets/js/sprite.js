@@ -17,6 +17,7 @@ let computerAttack = false;
 let playerChargeAttackCounter = 1;
 let computerChargeAttackCounter = 4;
 
+
 function setSkillMode(skill) {
 
     switch (skill) {
@@ -33,7 +34,6 @@ function setSkillMode(skill) {
 
     keyArray = letters.split('');
 }
-
 
 class Player {
     constructor(life) {
@@ -142,18 +142,16 @@ class Charizard extends Sprite {
         this.ticksPerFrame = 12;
     }
 
-    attack2() {
-        this.width = 136;
+    hit() {
+        this.width = 115;
         this.frames = 8;
         this.frameIndex = 0;
-        this.row = 3;
+        this.row = 2;
         this.ticksPerFrame = 12;
     }
 }
 
 class Pikachu extends Sprite {
-
-    // static src = './assets/images/pikachu-sprite.png';
 
     constructor(x, y, context, image) {
         super({
@@ -211,16 +209,63 @@ class Pikachu extends Sprite {
         this.ticksPerFrame = 12;
     }
 
+    hit() {
+        this.width = 60;
+        this.frames = 3;
+        this.frameIndex = 0;
+        this.row = 7;
+        this.ticksPerFrame = 12;
+    }
+
     thunder() {
-        this.width = 40;
-        this.frames = 8;
+        player1Attack = true;
+        this.width = 30;
+        this.frames = 4;
         this.frameIndex = 0;
         this.row = 10;
         this.ticksPerFrame = 12;
     }
 }
 
-const draw = (obj, type) => {
+class Attack extends Sprite {
+    constructor(x, y, context, image) {
+        super({
+            context: context,
+            image: image,
+            x: x,
+            y: y,
+            width: 0,
+            height: 0,
+            frameIndex: 0,
+            row: 0,
+            tickCount: 0,
+            ticksPerFrame: 0,
+            frames: 0
+        });
+    }
+
+    thunder() {
+        player1Attack = true;
+        this.width = 40;
+        this.height = 62;
+        this.frames = 6;
+        this.frameIndex = 0;
+        this.row = 10;
+        this.ticksPerFrame = 12;
+    }
+
+    fireball() {
+        computerAttack = true;
+        this.width = 20;
+        this.height = 88;
+        this.frames = 8;
+        this.frameIndex = 0;
+        this.row = 6;
+        this.ticksPerFrame = 12;
+    }
+}
+
+const draw = (type, obj = null) => {
     if (type === "tile1") {
         game.context.fillStyle = "black";
         game.context.fillRect(obj.x, obj.y, obj.width, obj.height);
@@ -236,6 +281,20 @@ const draw = (obj, type) => {
         game.context.fillStyle = 'white';
         game.context.fillText(obj.key, obj.x, obj.y);
     }
+    if (type === 'player1') {
+        game.pikachu.render();
+        game.pikachu.update();
+        game.pikachuAttack.render();
+        game.pikachuAttack.update();
+    }
+    // Draw and update frame index
+
+    if (type === 'computer') {
+        game.charizard.render();
+        game.charizard.update();
+        game.charizardAttack.render();
+        game.charizardAttack.update();
+    }
 }
 
 function manageLife(user, damage, reset = 0) {
@@ -249,14 +308,20 @@ function manageLife(user, damage, reset = 0) {
     }
 }
 
+function attackFunction(player) {
+    if (player === 'player1') game.pikachuAttack.thunder()
+    if (player === 'computer') game.charizardAttack.fireball()
+}
+
+
 //HANDLE SCORE ON KEYDOWN
 document.onkeydown = (e) => {
-    // console.log(game.computer);
     game.tileArray.map((tile, i) => {
         if (e.key.toUpperCase() == tile.key) {
             manageLife('computer', -1)
             game.player.chargeAttack++
-            game.pikachu.attack()
+            attackFunction('player1')
+
             // handleChargeAttack('player', game.player.chargeAttack)
             // handleKeyboard(e, 'deactive')
             game.tileArray.splice(i, 1);
@@ -265,24 +330,13 @@ document.onkeydown = (e) => {
         } else if (e.key.toUpperCase() !== tile.key) {
             manageLife('player', -1)
             game.computer.chargeAttack++
-            game.charizard.attack()
+
+            attackFunction('computer')
             // handleChargeAttack('computer', game.computer.chargeAttack)
             // shakeScreen();
             // checkScore();
         }
     })
-    // if(e.code === 'Space'){
-    //     game.pikachu.attack()
-    // }
-
-    // if(e.code === 'ArrowUp'){
-    //     game.pikachu.jump()
-    // }
-
-    // if(e.code === 'ArrowRight'){
-    //     game.pikachu.walk()
-    // }
-    console.log(e)
 }
 
 
@@ -303,13 +357,14 @@ const game = {
         game.loader = loader;
         game.loader.init();
 
-
         this.player = new Player(playerStartLife);
         this.computer = new Player(computerStartLife);
         this.tileArray = [];
 
         this.charizard = new Charizard(650, 80, game.context, loader.images.charizard);
         this.pikachu = new Pikachu(20, 80, game.context, loader.images.pikachu)
+        this.charizardAttack = new Attack(650, 80, game.context, loader.images.charizard);
+        this.pikachuAttack = new Attack(20, 80, game.context, loader.images.pikachu)
 
         // Start game
         game.drawingLoop();
@@ -322,17 +377,51 @@ const game = {
         // Clear canvas
         game.context.clearRect(0, 0, game.canvas.width, game.canvas.height);
 
-        // Draw and update frame index
-        game.charizard.render();
-        game.charizard.update();
-        game.pikachu.render();
-        game.pikachu.update();
+        draw('player1')
+        draw('computer')
+
+        if (player1Attack) {
+            game.pikachu.attack()
+            game.pikachuAttack.x += 3
+        }
+        if (game.pikachuAttack.x > game.charizard.x) {
+            // console.log('hit')
+            game.charizard.hit()
+            player1Attack = false
+            game.pikachuAttack.x = 0
+            game.pikachuAttack.width = 0
+            game.pikachu.idle()
+
+            setTimeout(() => {
+                game.charizard.idle();
+            }, 1000); 
+        }
+        if (computerAttack) {
+            game.charizard.attack()
+            game.charizardAttack.x -= 3
+        }
+        if (game.charizardAttack.x < game.pikachu.x) {
+            // console.log('hit')
+            game.pikachu.hit();
+            setTimeout(() => {
+                game.pikachu.idle();
+            }, 1000); 
+
+            computerAttack = false
+            game.charizardAttack.x = 650
+            game.charizardAttack.width = 0
+            game.charizard.idle()
+        }
+
 
         game.tileArray.forEach(tile => {
-            draw(tile, "tile")
+            draw("tile", tile)
         })
-        
-        if (frames % 150 === 0 && game.tileArray.length < 1) game.spawnTile();
+        if (frames % 150 === 0 && game.tileArray.length < 1 && player1Attack === false && computerAttack === false) {
+            game.spawnTile();
+            game.pikachu.idle();
+            game.charizard.idle();
+        }
         if (isRunning === true) requestAnimationFrame(game.drawingLoop);
     },
 
@@ -363,6 +452,18 @@ const game = {
 
     }
 };
+
+
+function resetPlayers() {
+    ['player', 'computer'].map(user => {
+        game.pikachu.idle();
+        game.charizard.idle();
+        manageLife(0, 0, 1);
+        game[user].chargeAttack = 0;
+        document.getElementById(`${user}Charge`).innerHTML = game[user].chargeAttack;
+    })
+}
+
 
 function stopGame() {
     isRunning = false;
