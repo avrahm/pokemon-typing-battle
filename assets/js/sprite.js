@@ -14,7 +14,7 @@ let computerChargeAttackDamage = -20;
 let player1Attack = false;
 let computerAttack = false;
 
-let playerChargeAttackCounter = 1;
+let playerChargeAttackCounter = 2;
 let computerChargeAttackCounter = 4;
 
 
@@ -143,11 +143,11 @@ class Charizard extends Sprite {
     }
 
     hit() {
-        this.width = 115;
-        this.frames = 8;
+        this.width = 117;
+        this.frames = 6;
         this.frameIndex = 0;
         this.row = 2;
-        this.ticksPerFrame = 12;
+        this.ticksPerFrame = 15;
     }
 }
 
@@ -210,11 +210,11 @@ class Pikachu extends Sprite {
     }
 
     hit() {
-        this.width = 60;
+        this.width = 75;
         this.frames = 3;
         this.frameIndex = 0;
         this.row = 7;
-        this.ticksPerFrame = 12;
+        this.ticksPerFrame = 15;
     }
 
     thunder() {
@@ -256,7 +256,7 @@ class Attack extends Sprite {
 
     fireball() {
         computerAttack = true;
-        this.width = 20;
+        this.width = 35;
         this.height = 88;
         this.frames = 8;
         this.frameIndex = 0;
@@ -292,6 +292,9 @@ const draw = (type, obj = null) => {
     if (type === 'computer') {
         game.charizard.render();
         game.charizard.update();
+    }
+
+    if(type === 'computerAttack'){
         game.charizardAttack.render();
         game.charizardAttack.update();
     }
@@ -309,8 +312,14 @@ function manageLife(user, damage, reset = 0) {
 }
 
 function attackFunction(player) {
-    if (player === 'player1') game.pikachuAttack.thunder()
-    if (player === 'computer') game.charizardAttack.fireball()
+    if (player === 'player1') {
+        game.pikachu.attack()
+        game.pikachuAttack.thunder()
+    }
+    if (player === 'computer') {
+        game.charizard.attack();
+        // game.charizardAttack.fireball()
+    }
 }
 
 
@@ -318,25 +327,78 @@ function attackFunction(player) {
 document.onkeydown = (e) => {
     game.tileArray.map((tile, i) => {
         if (e.key.toUpperCase() == tile.key) {
-            manageLife('computer', -1)
             game.player.chargeAttack++
             attackFunction('player1')
-
-            // handleChargeAttack('player', game.player.chargeAttack)
-            // handleKeyboard(e, 'deactive')
+            
+            handleKeyboard(e, 'deactive')
             game.tileArray.splice(i, 1);
-            // shakeScreen();
-            // checkScore();
+            checkScore();
         } else if (e.key.toUpperCase() !== tile.key) {
-            manageLife('player', -1)
             game.computer.chargeAttack++
-
             attackFunction('computer')
-            // handleChargeAttack('computer', game.computer.chargeAttack)
-            // shakeScreen();
-            // checkScore();
+            let charizardAttack = new Attack(650, 80, game.context, loader.images.charizard);
+            game.computerAttackArr.push(charizardAttack);
+            checkScore();
         }
     })
+}
+
+function checkScore() {
+    if (game.player.life <= 0) {
+        console.log('Computer wins');
+        stopGame();
+    }
+    if (game.computer.life <= 0) {
+        console.log('Player wins!');
+        stopGame();
+    }
+}
+
+//HANDLE KEYBOARD
+function handleKeyboard(tile, status) {
+
+    if (status === "active" || status === "deactive") {
+        // console.log(tile.key)
+        // if (tile.key === (/A-Z/)) {
+        tile = tile.key.toLowerCase();
+        //     console.log(tile)
+        // }
+        document.getElementById(`${tile}`).setAttribute("class", `${status}Key`)
+    }
+
+    if (status === "reset") {
+        game.tileArray.map((tile, i) => {
+            game.tileArray.splice(i, 1);
+            document.getElementById(`${tile.key.toLowerCase()}`).setAttribute("class", `${status}Key`)
+            // document.getElementById(tile.key).setAttribute("class", `clear`)
+        })
+    }
+}
+
+function shakeScreen() {
+    document.querySelector("canvas").classList.add("score-shake");
+    setTimeout(() => {
+        document.querySelector("canvas").classList.remove("score-shake");
+    }, 600);
+}
+
+function handleChargeAttack(user, chargeAttack) {
+    document.getElementById(`${user}Charge`).innerHTML = game[user].chargeAttack;
+    if (user === 'player') {
+        if (chargeAttack === playerChargeAttackCounter) {
+            manageLife('computer', playerChargeAttackDamage)
+            game[user].chargeAttack = 0;
+            document.getElementById(`${user}Charge`).innerHTML = game[user].chargeAttack;
+            
+        }
+    }
+    if (user === 'computer') {
+        if (chargeAttack === computerChargeAttackCounter) {
+            manageLife('player', computerChargeAttackDamage)
+            game[user].chargeAttack = 0;
+            document.getElementById(`${user}Charge`).innerHTML = game[user].chargeAttack;
+        }
+    }
 }
 
 
@@ -360,10 +422,11 @@ const game = {
         this.player = new Player(playerStartLife);
         this.computer = new Player(computerStartLife);
         this.tileArray = [];
+        this.computerAttackArr = [];
 
         this.charizard = new Charizard(650, 80, game.context, loader.images.charizard);
-        this.pikachu = new Pikachu(20, 80, game.context, loader.images.pikachu)
         this.charizardAttack = new Attack(650, 80, game.context, loader.images.charizard);
+        this.pikachu = new Pikachu(20, 80, game.context, loader.images.pikachu)
         this.pikachuAttack = new Attack(20, 80, game.context, loader.images.pikachu)
 
         // Start game
@@ -381,42 +444,51 @@ const game = {
         draw('computer')
 
         if (player1Attack) {
-            game.pikachu.attack()
             game.pikachuAttack.x += 3
         }
         if (game.pikachuAttack.x > game.charizard.x) {
-            // console.log('hit')
             game.charizard.hit()
             player1Attack = false
             game.pikachuAttack.x = 0
             game.pikachuAttack.width = 0
             game.pikachu.idle()
-
+            manageLife('computer', -1)
+            shakeScreen();
             setTimeout(() => {
                 game.charizard.idle();
-            }, 1000); 
+            }, 1000);
+            handleChargeAttack('player', game.player.chargeAttack)
         }
         if (computerAttack) {
-            game.charizard.attack()
-            game.charizardAttack.x -= 3
-        }
-        if (game.charizardAttack.x < game.pikachu.x) {
-            // console.log('hit')
-            game.pikachu.hit();
-            setTimeout(() => {
-                game.pikachu.idle();
-            }, 1000); 
-
-            computerAttack = false
-            game.charizardAttack.x = 650
-            game.charizardAttack.width = 0
-            game.charizard.idle()
+            // game.charizardAttack.x -= 3
         }
 
+        
 
         game.tileArray.forEach(tile => {
             draw("tile", tile)
         })
+
+        game.computerAttackArr.forEach(attack => {
+            draw("computerAttack")
+            console.log(attack);
+            
+            // if (attack.charizardAttack.x < game.pikachu.x && i === 234) {
+            //     game.pikachu.hit();
+            //     setTimeout(() => {
+            //         game.pikachu.idle();
+            //     }, 1000);
+            //     manageLife('player', -1)
+            //     handleChargeAttack('computer', game.computer.chargeAttack)
+            //     shakeScreen();
+            //     computerAttack = false
+            //     attack.charizardAttack.x = 650
+            //     attack.charizardAttack.width = 0
+            //     game.charizard.idle()
+            // }
+        });
+
+        // console.log(game.computerAttackArr);
         if (frames % 150 === 0 && game.tileArray.length < 1 && player1Attack === false && computerAttack === false) {
             game.spawnTile();
             game.pikachu.idle();
@@ -448,7 +520,7 @@ const game = {
         let newTile = new Tile(rKey, rX, rY, rWidth, rHeight);
 
         game.tileArray.push(newTile);
-        // handleKeyboard(newTile, 'active');
+        handleKeyboard(newTile, 'active');
 
     }
 };
@@ -467,8 +539,8 @@ function resetPlayers() {
 
 function stopGame() {
     isRunning = false;
-    // resetPlayers();
-    // handleKeyboard(0, 'reset');
+    resetPlayers();
+    handleKeyboard(0, 'reset');
     /// kill any request in progress
     game.drawingLoop ? cancelAnimationFrame : false;
 }
