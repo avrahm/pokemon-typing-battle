@@ -50,6 +50,8 @@ class Tile {
     // }
 }
 
+//sprite animation
+//https://demyanov.dev/javascript-canvas-sprite-animation
 class Sprite {
     constructor(options) {
         this.context = options.context;
