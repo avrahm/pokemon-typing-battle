@@ -2,58 +2,70 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sprite</title>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Sprite</title>
 </head>
 <link rel="stylesheet" href="./assets/css/main.css" type="text/css">
 <script type="text/javascript" src="./assets/js/sprite.js"></script>
 
 
 <body style="flex: auto ;flex-direction: column;">
-    <button id="start-button" onclick="startGame('home')">Home Row</button>
-    <button id="start-button" onclick="startGame('top')">Top Row</button>
-    <button id="start-button" onclick="startGame('bottom')">Bottom Row</button>
+	<button id="start-button" onclick="startGame('home')">Home Row</button>
+	<button id="start-button" onclick="startGame('top')">Top Row</button>
+	<button id="start-button" onclick="startGame('bottom')">Bottom Row</button>
 
-    <br />
-    <div class="life">
-        Player Life <span id="playerLife"> </span>
-        Computer <span id="computerLife"> </span>
-    </div>
-    <div class="charge">
-        Player Charge Attack <span id="playerCharge"> </span>
-        Computer Charge Attack <span id="computerCharge"> </span>
-    </div>
-    <br />
-    <div>
-        <canvas id="gamecanvas" width="800" height="300" style="border: 1px solid black; "></canvas>
+	<br />
 
-    </div>
-    <br />
-    <div>
-        <button type="button" onclick="game.pikachu.walk()">Walk</button>
-        <button type="button" onclick="game.pikachu.run()">Run</button>
-        <button type="button" onclick="game.pikachu.idle()">Idle</button>
-        <button type="button" onclick="game.pikachu.attack()">Shock</button>
-        <button type="button" onclick="game.pikachu.hit()">Hit</button>
+	<div class="life">
+		Player Life <span id="playerLife"> </span>
+		Computer <span id="computerLife"> </span>
+	</div>
 
-    </div>
-    <br />
-    <div>
-        <!-- <button type="button" onclick="game.charizard.walk()">Walk</button> -->
-        <button type="button" onclick="game.charizard.fly()">Fly</button>
-        <button type="button" onclick="game.charizard.idle()">Idle</button>
-        <button type="button" onclick="game.charizard.attack()">Attack</button>
-        <button type="button" onclick="game.charizard.hit()">Hit</button>
+	<div class="charge">
+		Player Charge Attack <span id="playerCharge"> </span>
+		Computer Charge Attack <span id="computerCharge"> </span>
+	</div>
 
-    </div>
-    <br />
-    <div>
-        <button id="stop-button" onclick="stopGame()">Stop</button>
+	<br />
 
-    </div>
+	<div>
+		<canvas id="gamecanvas" width="800" height="300" style="border: 1px solid black; "></canvas>
+	</div>
 
-    	<table class="keyboard">
+	<br />
+
+	<div>
+		<button type="button" onclick="game.player.walk()">Walk</button>
+		<button type="button" onclick="game.player.run()">Run</button>
+		<button type="button" onclick="game.player.idle()">Idle</button>
+		<button type="button" onclick="game.player.attack()">Shock</button>
+		<button type="button" onclick="game.player.hit()">Hit</button>
+
+	</div>
+
+	<br />
+
+	<div>
+		<!-- <button type="button" onclick="game.computer.walk()">Walk</button> -->
+		<button type="button" onclick="game.computer.fly()">Fly</button>
+		<button type="button" onclick="game.computer.idle()">Idle</button>
+		<button type="button" onclick="game.computer.attack()">Attack</button>
+		<button type="button" onclick="game.computer.hit()">Hit</button>
+	</div>
+
+	<br />
+
+	<button type="button" onclick="background('stadium','top')">Battleground</button>
+	<button type="button" onclick="background('outdoor','bottom')">Outdoors</button>
+
+	<br />
+	<div>
+		<button id="stop-button" onclick="stopGame()">Stop</button>
+
+	</div>
+
+	<table class="keyboard">
 		<tr>
 			<td id="`">`</td>
 			<td id="1">1</td>
@@ -126,11 +138,11 @@
 	</table>
 
 
-    <script>
-        window.addEventListener("load", () => {
-            game.init();
-        });
-    </script>
+	<script>
+		window.addEventListener("load", () => {
+			game.init();
+		});
+	</script>
 </body>
 
 </html>

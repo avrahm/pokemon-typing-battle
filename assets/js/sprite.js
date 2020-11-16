@@ -11,15 +11,18 @@ let computerStartLife = 1000;
 let playerChargeAttackDamage = -50;
 let computerChargeAttackDamage = -20;
 
-let playerAttack = false;
-let computerAttack = false;
+let playerAttackToggle = false;
+let computerAttackToggle = false;
 
 let playerChargeAttackCounter = 2;
 let computerChargeAttackCounter = 4;
 
+function background(setting, position) {
+    document.getElementById('gamecanvas').style.backgroundImage = `url('/assets/images/pokemon_${setting}_bg.png')`;
+    document.getElementById('gamecanvas').style.backgroundPosition = position;
+}
 
 function setSkillMode(skill) {
-
     switch (skill) {
         case "home":
             letters = "ASDFGHJKL"; //;"
@@ -242,7 +245,7 @@ class Attack extends Sprite {
     }
 
     thunder() {
-        playerAttack = true;
+        playerAttackToggle = true;
         this.width = 40;
         this.height = 62;
         this.frames = 6;
@@ -252,7 +255,7 @@ class Attack extends Sprite {
     }
 
     fireball() {
-        computerAttack = true;
+        computerAttackToggle = true;
         this.width = 35;
         this.height = 88;
         this.frames = 8;
@@ -275,32 +278,24 @@ const draw = (type, obj = null) => {
         smallCircle.arc(obj.x + 11, obj.y - 10, 25, 0, 2 * Math.PI);
         game.context.fillStyle = "black"
         game.context.fill(smallCircle);
-        game.context.font = "35px Sans-serif";
+        game.context.font = "25px Times";
         game.context.strokeStyle = "black";
         game.context.lineWidth = 4;
         game.context.strokeText(obj.key, obj.x, obj.y);
         game.context.fillStyle = "white";
         game.context.fillText(obj.key, obj.x, obj.y);
+
     }
+
+    // Draw and update frame index
     if (type === "player") {
         game.player.render();
         game.player.update();
-        game.playerAttack.render();
-        game.playerAttack.update();
     }
-    // Draw and update frame index
-
     if (type === "computer") {
         game.computer.render();
         game.computer.update();
-        game.computerAttack.render();
-        game.computerAttack.update();
     }
-
-    // if(type === "computerAttack"){
-    //     game.computerAttack.render();
-    //     game.computerAttack.update();
-    // }
 }
 
 function manageLife(user, damage, reset = 0) {
@@ -317,11 +312,13 @@ function manageLife(user, damage, reset = 0) {
 function attackFunction(player) {
     if (player === "player") {
         game.player.attack()
-        game.playerAttack.thunder()
+        let playerAttack = new Attack(65, 190, game.context, loader.images.player);
+        game.playerAttackArr.push(playerAttack);
     }
     if (player === "computer") {
         game.computer.attack();
-        game.computerAttack.fireball()
+        let computerAttack = new Attack(650, 160, game.context, loader.images.computer);
+        game.computerAttackArr.push(computerAttack);
     }
 }
 
@@ -335,8 +332,6 @@ document.onkeydown = (e) => {
             checkScore();
         } else if (e.key.toUpperCase() !== tile.key) {
             attackFunction("computer")
-            // let computerAttack = new Attack(650, 80, game.context, loader.images.computer);
-            // game.computerAttackArr.push(computerAttack);
             checkScore();
         }
     })
@@ -447,15 +442,12 @@ const game = {
         game.loader = loader;
         game.loader.init();
 
-        // this.playerScore = new Score(playerStartLife);
-        // this.computerScore = new Score(computerStartLife);
         this.tileArray = [];
         this.computerAttackArr = [];
+        this.playerAttackArr = [];
 
         this.computer = new Computer(650, 160, game.context, loader.images.computer, computerStartLife);
-        this.computerAttack = new Attack(650, 160, game.context, loader.images.computer);
         this.player = new Player(65, 190, game.context, loader.images.player, playerStartLife)
-        this.playerAttack = new Attack(65, 190, game.context, loader.images.player)
 
         // Start game
         game.drawingLoop();
@@ -471,72 +463,76 @@ const game = {
         draw("player")
         draw("computer")
 
-        if (playerAttack) {
-            game.playerAttack.x += 3
-        }
-        if (game.playerAttack.x > game.computer.x) {
-            game.player.chargeAttack++
-            game.computer.hit()
-            playerAttack = false
-            game.playerAttack.x = 65
-            game.playerAttack.width = 0
-            game.player.idle()
-            manageLife("computer", -1)
-            shakeScreen();
-            setTimeout(() => {
-                game.computer.idle();
-            }, 1000);
-            handleChargeAttack("player", game.player.chargeAttack)
-            handleChargeAttack("computer", "reset")
+        game.playerAttackArr.forEach((attack, i) => {
+            attack.render();
+            attack.update();
+            attack.thunder();
+            attack.x += 3
 
-        }
-        if (computerAttack) {
-            game.computerAttack.x -= 3
-        }
-        if (game.computerAttack.x < game.player.x) {
-            game.computer.chargeAttack++
-            game.player.hit();
-            setTimeout(() => {
-                game.player.idle();
-            }, 1000);
-            manageLife("player", -1)
-            handleChargeAttack("computer", game.computer.chargeAttack)
-            shakeScreen();
-            computerAttack = false
-            game.computerAttack.x = 650
-            game.computerAttack.width = 0
-            game.computer.idle()
-            game.player.chargeAttack = 0
+            if (attack.x === game.computer.x) {
+                game.player.chargeAttack++
+                game.computer.hit()
+                playerAttackToggle = false
+                attack.x = 65
+                attack.width = 0
+                game.player.idle()
+                manageLife("computer", -1)
+                shakeScreen();
+                setTimeout(() => {
+                    game.computer.idle();
+                }, 1000);
 
-            handleChargeAttack("player", "reset")
-        }
+                game.playerAttackArr.splice(i, 1)
+                handleChargeAttack("player", game.player.chargeAttack)
+                handleChargeAttack("computer", "reset")
+            }
+        });
 
+        game.computerAttackArr.forEach((attack, i) => {
+            attack.render();
+            attack.update();
+            attack.fireball();
+            attack.x -= 3
+            if (attack.x === game.player.x) {
+                game.computer.chargeAttack++
+                game.player.hit();
+                setTimeout(() => {
+                    game.player.idle();
+                }, 1000);
+                manageLife("player", -1)
+                handleChargeAttack("computer", game.computer.chargeAttack)
+                shakeScreen();
+                attack.x = 650
+                attack.width = 0
+                game.computer.idle()
+                game.player.chargeAttack = 0
+                game.computerAttackArr.splice(i, 1)
+                handleChargeAttack("player", "reset")
+            }
+        });
 
         game.tileArray.forEach(tile => {
             draw("tile", tile)
         })
 
-        // game.computerAttackArr.forEach(attack => {
-        //     draw("computerAttack")
-        //     console.log(attack);
-        // });
-
-        // console.log(game.computerAttackArr);
-        if (frames % 150 === 0 && game.tileArray.length < 1 
-            // && playerAttack === false && computerAttack === false
-            ) {
+        if (frames % 150 === 0 && game.tileArray.length < 1) {
             game.spawnTile();
             game.player.idle();
             game.computer.idle();
         }
+
         if (isRunning === true) requestAnimationFrame(game.drawingLoop);
     },
 
     spawnTile() {
-
+        //right 535
+        //let 250
+        let xaxisArr = [ 250, 535 ]
+        let yaxis = 125;
         let rKey = keyArray[Math.floor(Math.random() * keyArray.length)];
-        let rX = Math.floor(Math.random() * (game.context.width));
-        let rY = Math.floor(Math.random() * (game.context.height));
+        let rX = xaxisArr[Math.floor(Math.random() * xaxisArr.length)];
+        let rY = yaxis
+        // Math.floor(Math.random() * (game.context.height));
         let rWidth = 85;
         let rHeight = 85;
         if (rX + rWidth > game.context.width - 120) {

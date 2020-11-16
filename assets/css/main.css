@@ -5,8 +5,6 @@
 #gamecanvas {
     /* background-color: wheat; */
     border: 1px black solid ;
-    background-image: url('/assets/images/pokemon_stadium_bg.png');
-    background-position: top;
     background-size: cover;
 }
 
