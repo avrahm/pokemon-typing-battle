@@ -4,115 +4,160 @@
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>Pokemon Typing Battle</title>
+	<title>Sprite</title>
 </head>
-
-<!-- Main CSS -->
+<!-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css" integrity="sha384-TX8t27EcRE3e/ihU7zmQxVncDAy5uIKz4rEkgIXeMed4M0jlfIDPvg6uqKI2xXr2" crossorigin="anonymous"> -->
 <link rel="stylesheet" href="./assets/css/main.css" type="text/css">
+<script type="text/javascript" src="./assets/js/sprite.js"></script>
 
-<body style="flex: auto ;flex-direction: column;">
-	<!-- <a href="sprite.html"><img src="./assets/images/ptb-logo.png" height="180px"></a> -->
+<body>
+	<div id="header">
+		<img src="./assets/images/ptb-logo.png" class="logo">
+
+		<h2>Choose your background</h2>
+		<div class="background-picker">
+			<div id="stadium-bg"><a onclick="background('stadium','top')">
+					<img src="./assets/images/pokemon_stadium_bg.png"></a></div>
+			<div id="outdoor-bg"><a onclick="background('outdoor','bottom')">
+					<img src="./assets/images/pokemon_outdoor_bg.png"></a></div>
+		</div>
+		
+		<h2>Choose your skill</h2>
+		<div class="mode-selector">
+			<button id="start-button" onclick="startGame('home')">Home Row</button>
+			<button id="start-button" onclick="startGame('top')">Top Row</button>
+			<button id="start-button" onclick="startGame('bottom')">Bottom Row</button>
+		</div>
+	</div>
+	<div id="main">
+		<div class="life">
+			Player Life <span id="playerLife"> </span>
+			Computer <span id="computerLife"> </span>
+		</div>
+
+		<div class="charge">
+			Player Charge Attack <span id="playerCharge"> </span>
+			Computer Charge Attack <span id="computerCharge"> </span>
+		</div>
+
+		<br />
+
+		<div>
+			<canvas id="gamecanvas" width="800" height="300" style="border: 1px solid black; "></canvas>
+		</div>
+
+		<br />
+
+		<!-- <div>
+		<button type="button" onclick="game.player.walk()">Walk</button>
+		<button type="button" onclick="game.player.run()">Run</button>
+		<button type="button" onclick="game.player.idle()">Idle</button>
+		<button type="button" onclick="game.player.attack()">Shock</button>
+		<button type="button" onclick="game.player.hit()">Hit</button>
+		<button type="button" onclick="game.player.jump()">Jump</button>
+
+	</div>
+
+	<br />
+
 	<div>
-
-		<button id="start-button" onclick="startGame('home')">Home Row</button>
-		<button id="start-button" onclick="startGame('top')">Top Row</button>
-		<button id="start-button" onclick="startGame('bottom')">Bottom Row</button>
-
-	</div>
-	<div class="life">
-		Player Life <span id="playerLife"> </span>
-		Computer <span id="computerLife"> </span>
-	</div>
-	<div class="charge">
-		Player Charge Attack <span id="playerCharge"> </span>
-		Computer Charge Attack <span id="computerCharge"> </span>
-	</div>
-	<div>
-		<canvas id="game-board" width="800" height="250"></canvas>
-		<span id="score" style="font-size: 80pt;"></span>
-
-	</div>
-	<div>
-		<button id="stop-button" onclick="stopGame()">Stop</button>
-
+		<button type="button" onclick="game.computer.fly()">Fly</button>
+		<button type="button" onclick="game.computer.idle()">Idle</button>
+		<button type="button" onclick="game.computer.attack()">Attack</button>
+		<button type="button" onclick="game.computer.hit()">Hit</button>
 	</div>
 
-	<!-- <table class="keyboard">
-		<tr>
-			<td id="`">`</td>
-			<td id="1">1</td>
-			<td id="2">2</td>
-			<td id="3">3</td>
-			<td id="4">4</td>
-			<td id="5">5</td>
-			<td id="6">6</td>
-			<td id="7">7</td>
-			<td id="8">8</td>
-			<td id="9">9</td>
-			<td id="0">0</td>
-			<td id="-">-</td>
-			<td id="=">=</td>
-			<td id="delete" colspan="2">DELETE</td>
-		</tr>
-		<tr>
-			<td id="tab" colspan="2">TAB</td>
-			<td id="q">Q</td>
-			<td id="w">W</td>
-			<td id="e">E</td>
-			<td id="r">R</td>
-			<td id="t">T</td>
-			<td id="y">Y</td>
-			<td id="u">U</td>
-			<td id="i">I</td>
-			<td id="o">O</td>
-			<td id="p">P</td>
-			<td id="[">[</td>
-			<td id="]">]</td>
-			<td id="\">\</td>
-		</tr>
+	<br />
 
-		<tr>
-			<td id="caps" colspan="2">CAPS LOCK</td>
-			<td id="a">A</td>
-			<td id="s">S</td>
-			<td id="d">D</td>
-			<td id="f">F</td>
-			<td id="g">G</td>
-			<td id="h">H</td>
-			<td id="j">J</td>
-			<td id="k">K</td>
-			<td id="l">L</td>
-			<td id=";">;</td>
-			<td id="''">'</td>
-			<td id="enter" colspan="2">RETURN</td>
-		</tr>
+	<button type="button" onclick="background('stadium','top')">Battleground</button>
+	<button type="button" onclick="background('outdoor','bottom')">Outdoors</button>
 
-		<tr>
-			<td id="shift" colspan="3">SHIFT</td>
-			<td id="z">Z</td>
-			<td id="x">X</td>
-			<td id="c">C</td>
-			<td id="v">V</td>
-			<td id="b">B</td>
-			<td id="n">N</td>
-			<td id="m">M</td>
-			<td id=",">,</td>
-			<td id=".">.</td>
-			<td id="/">/</td>
-			<td id="" colspan="2">SHIFT</td>
-		</tr>
+	<br /> -->
+		<div>
+			<button id="stop-button" onclick="stopGame()">Stop</button>
+			<button id="stop-button" onclick="pauseGame()">Pause</button>
 
-		<tr>
-			<td colspan="4"></td>
-			<td id="space" colspan="7">SPACE</td>
-			<td colspan="4"></td>
-		</tr>
-	</table> -->
+		</div>
 
-	<!-- Main JS -->
-	<script src="./assets/js/sprite.js"></script>
-	<script src="./assets/js/index.js"></script>
+	</div>
+	<div id="keyboard-div">
+		<table class="keyboard">
+			<tr>
+				<td id="`">`</td>
+				<td id="1">1</td>
+				<td id="2">2</td>
+				<td id="3">3</td>
+				<td id="4">4</td>
+				<td id="5">5</td>
+				<td id="6">6</td>
+				<td id="7">7</td>
+				<td id="8">8</td>
+				<td id="9">9</td>
+				<td id="0">0</td>
+				<td id="-">-</td>
+				<td id="=">=</td>
+				<td id="delete" colspan="2">DELETE</td>
+			</tr>
+			<tr>
+				<td id="tab" colspan="2">TAB</td>
+				<td id="q">Q</td>
+				<td id="w">W</td>
+				<td id="e">E</td>
+				<td id="r">R</td>
+				<td id="t">T</td>
+				<td id="y">Y</td>
+				<td id="u">U</td>
+				<td id="i">I</td>
+				<td id="o">O</td>
+				<td id="p">P</td>
+				<td id="[">[</td>
+				<td id="]">]</td>
+				<td id="\">\</td>
+			</tr>
 
+			<tr>
+				<td id="caps" colspan="2">CAPS LOCK</td>
+				<td id="a">A</td>
+				<td id="s">S</td>
+				<td id="d">D</td>
+				<td id="f">F</td>
+				<td id="g">G</td>
+				<td id="h">H</td>
+				<td id="j">J</td>
+				<td id="k">K</td>
+				<td id="l">L</td>
+				<td id=";">;</td>
+				<td id="''">'</td>
+				<td id="enter" colspan="2">RETURN</td>
+			</tr>
+
+			<tr>
+				<td id="shift" colspan="3">SHIFT</td>
+				<td id="z">Z</td>
+				<td id="x">X</td>
+				<td id="c">C</td>
+				<td id="v">V</td>
+				<td id="b">B</td>
+				<td id="n">N</td>
+				<td id="m">M</td>
+				<td id=",">,</td>
+				<td id=".">.</td>
+				<td id="/">/</td>
+				<td id="" colspan="2">SHIFT</td>
+			</tr>
+
+			<tr>
+				<td colspan="4"></td>
+				<td id="space" colspan="7">SPACE</td>
+				<td colspan="4"></td>
+			</tr>
+		</table>
+	</div>
+
+	<script>
+		window.addEventListener("load", () => {
+			game.init();
+		});
+	</script>
 </body>
-
 </html>
