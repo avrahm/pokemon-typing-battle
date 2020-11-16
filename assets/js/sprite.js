@@ -20,6 +20,19 @@ let computerChargeAttackCounter = 4;
 function background(setting, position) {
     document.getElementById('gamecanvas').style.backgroundImage = `url('/assets/images/pokemon_${setting}_bg.png')`;
     document.getElementById('gamecanvas').style.backgroundPosition = position;
+    switch (setting) {
+        case 'stadium':
+            document.getElementById(`${setting}-bg`).style.border = '4px solid red';
+            document.getElementById(`outdoor-bg`).style.border = 'none';
+            break;
+        case 'outdoor':
+            document.getElementById(`${setting}-bg`).style.border = '4px solid red';
+            document.getElementById(`stadium-bg`).style.border = 'none';
+            break;
+
+        default:
+            break;
+    }
 }
 
 function setSkillMode(skill) {
@@ -120,7 +133,7 @@ class Computer extends Sprite {
 
     fly() {
         this.width = 144;
-        this.frames = 5;
+        this.frames = 4;
         this.frameIndex = 0;
         this.row = 1;
         this.ticksPerFrame = 13;
@@ -178,11 +191,11 @@ class Player extends Sprite {
     }
 
     jump() {
-        this.width = 40;
+        this.width = 62;
         this.frames = 4;
         this.frameIndex = 0;
         this.row = 6;
-        this.ticksPerFrame = 12;
+        this.ticksPerFrame = 15;
     }
 
     run() {
@@ -190,7 +203,7 @@ class Player extends Sprite {
         this.frames = 4;
         this.frameIndex = 0;
         this.row = 2;
-        this.ticksPerFrame = 8;
+        this.ticksPerFrame = 4;
     }
 
     idle() {
@@ -265,7 +278,7 @@ class Attack extends Sprite {
     }
 }
 
-const draw = (type, obj = null) => {
+function draw(type, obj = null) {
     if (type === "tile") {
         var circle = new Path2D();
         circle.arc(obj.x + 11, obj.y - 10, 50, 0, 2 * Math.PI);
@@ -407,13 +420,6 @@ function handleChargeAttack(user, chargeAttack) {
     }
 }
 
-startGame = (skill) => {
-    isRunning = true;
-    setSkillMode(skill);
-    game.drawingLoop();
-    manageLife(0, 0, 1);
-}
-
 function resetPlayers() {
     ["player", "computer"].map(user => {
         game.player.idle();
@@ -424,11 +430,30 @@ function resetPlayers() {
     })
 }
 
+function startGame(skill) {
+   document.getElementById("header").style.display = "none";
+   document.getElementById("main").style.display = "block";
+   document.getElementById("keyboard-div").style.display = "block";
+    isRunning = true;
+    setSkillMode(skill);
+    game.drawingLoop();
+    manageLife(0, 0, 1);
+}
+
+function pauseGame() {
+    isRunning = !isRunning
+    game.drawingLoop();
+    console.log(isRunning)
+}
+
 function stopGame() {
     isRunning = false;
     resetPlayers();
     handleKeyboard(0, "reset");
 
+    document.getElementById("header").style.display = "block";
+    document.getElementById("main").style.display = "none";
+    document.getElementById("keyboard-div").style.display = "none";
     /// kill any request in progress
     game.drawingLoop ? cancelAnimationFrame : false;
 }
@@ -446,20 +471,30 @@ const game = {
         this.computerAttackArr = [];
         this.playerAttackArr = [];
 
-        this.computer = new Computer(650, 160, game.context, loader.images.computer, computerStartLife);
-        this.player = new Player(65, 190, game.context, loader.images.player, playerStartLife)
+        this.computer = new Computer(850, 160, game.context, loader.images.computer, computerStartLife);
+        this.player = new Player(-50, 190, game.context, loader.images.player, playerStartLife)
 
         // Start game
         game.drawingLoop();
-        game.player.idle();
-        game.computer.idle();
+        game.player.run()
+        game.computer.fly()
+
     },
 
     drawingLoop() {
         frames++
         // Clear canvas
         game.context.clearRect(0, 0, game.canvas.width, game.canvas.height);
-
+        game.player.x += 1;
+        game.computer.x -= 1.5;
+        if (game.player.x >= 65) {
+            // game.player.idle(); 
+            game.player.x = 65
+        }
+        if (game.computer.x <= 650) {
+            // game.computer.idle(); 
+            game.computer.x = 650
+        }
         draw("player")
         draw("computer")
 
@@ -527,11 +562,11 @@ const game = {
     spawnTile() {
         //right 535
         //let 250
-        let xaxisArr = [ 250, 535 ]
-        let yaxis = 125;
+        let xAxisArr = [250, 535]
+        let yAxis = 125;
         let rKey = keyArray[Math.floor(Math.random() * keyArray.length)];
-        let rX = xaxisArr[Math.floor(Math.random() * xaxisArr.length)];
-        let rY = yaxis
+        let rX = xAxisArr[Math.floor(Math.random() * xAxisArr.length)];
+        let rY = yAxis
         // Math.floor(Math.random() * (game.context.height));
         let rWidth = 85;
         let rHeight = 85;

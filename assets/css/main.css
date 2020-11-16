@@ -1,11 +1,41 @@
-#sprite {
-    background-color: thistle;
-}
-
 #gamecanvas {
     /* background-color: wheat; */
     border: 1px black solid ;
     background-size: cover;
+}
+
+#header {
+  text-align: center;
+}
+
+#main {
+  display: none
+}
+
+#keyboard-div {
+  display: none
+}
+
+.logo {
+  width: 200px;
+}
+
+.logo, .background-picker, .stadium-bg, .outdoor-bg, .mode-selector {
+  padding: 20px;
+  margin: auto;
+  flex-direction: row !important;
+  display: flex;
+  justify-content: space-around;
+}
+
+.background-picker > div > a > img {
+  width: 250px !important;
+}
+
+.mode-selector > button {
+  padding: 20px;
+  color: blue;
+  font-size: 1.7em;
 }
 
 .life {
