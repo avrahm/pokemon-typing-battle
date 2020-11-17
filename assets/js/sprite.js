@@ -442,7 +442,11 @@ function resetPlayers() {
         game.computer.idle();
         manageLife(0, 0, 1);
         game[user].chargeAttack = 0;
-        document.getElementById(`${user}Charge`).innerHTML = game[user].chargeAttack;
+        for (i = 1; i < 4; i++) {
+            // document.getElementById(`${user}-charge-${i}`).style.backgroundColor = '';
+            console.log(i)
+        }
+        // document.getElementById(`${user}Charge`).innerHTML = game[user].chargeAttack;
     })
 }
 
