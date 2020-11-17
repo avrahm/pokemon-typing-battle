@@ -51,33 +51,24 @@
 				</td>
 				<td>Computer Life</td>
 				<td style="border: 1px solid black;">
-					<div style="width: 300px; height: 20px; background-color: red;"></div>
+					<div id="computerLife" style="width: 300px; height: 20px; background-color: red;"></div>
 				</td>
 			</tr>
 			<tr>
 				<td>Player Charge</td>
-				<td class="charge-attack-row">
+				<td class="charge-attack-row" id="playerCharge">
 					<div class="charge-attack" id="player-charge-1"></div>
 					<div class="charge-attack" id="player-charge-2"></div>
 					<div class="charge-attack" id="player-charge-3"></div>
 				</td>
 				<td>Computer Charge</td>
-				<td class="charge-attack-row">
+				<td class="charge-attack-row" id="computerCharge">
 					<div class="charge-attack" id="computer-charge-1"></div>
 					<div class="charge-attack" id="computer-charge-2"></div>
 					<div class="charge-attack" id="computer-charge-3"></div>
 				</td>
 			</tr>
 		</table>
-		<div class="life">
-			<!-- Player Life <span id="playerLife"> </span> -->
-			Computer <span id="computerLife"> </span>
-		</div>
-
-		<div class="charge">
-			Player Charge Attack <span id="playerCharge"> </span>
-			Computer Charge Attack <span id="computerCharge"> </span>
-		</div>
 
 		<br />
 
@@ -119,7 +110,7 @@
 		</div>
 
 	</div>
-	<div id="keyboard-div">
+	<div id="keyboard-div" style="width: 100%;">
 		<table class="keyboard">
 			<tr>
 				<td id="`">`</td>

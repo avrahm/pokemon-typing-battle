@@ -19,8 +19,8 @@ let computerDamage = -20;
 let playerChargeAttackDamage = -50;
 let computerChargeAttackDamage = -20;
 
-let playerChargeAttackCounter = 2;
-let computerChargeAttackCounter = 4;
+let playerChargeAttackCounter = 3;
+let computerChargeAttackCounter = 3;
 
 function background(setting, position) {
     document.getElementById("gamecanvas").style.backgroundImage = `url('/assets/images/pokemon_${setting}_bg.png')`;
@@ -44,7 +44,7 @@ function background(setting, position) {
 function setSkillMode(skill) {
 
     document.getElementById(`skillSelector_${skill}`).style.border = '4px solid red';
-    
+
 
     switch (skill) {
         case "home":
@@ -406,30 +406,29 @@ function shakeScreen() {
 }
 
 function handleChargeAttack(user, chargeAttack) {
-    document.getElementById(`${user}Charge`).innerHTML = game[user].chargeAttack;
     if (user === "player" && Number(chargeAttack)) {
+        document.getElementById(`${user}-charge-${chargeAttack}`).style.backgroundColor = 'blue';
         if (chargeAttack === playerChargeAttackCounter) {
             manageLife("computer", playerChargeAttackDamage)
             game[user].chargeAttack = 0;
-            document.getElementById(`${user}Charge`).innerHTML = game[user].chargeAttack;
         }
     }
     if (user === "computer" && Number(chargeAttack)) {
+        document.getElementById(`${user}-charge-${chargeAttack}`).style.backgroundColor = 'blue';
         if (chargeAttack === computerChargeAttackCounter) {
             manageLife("player", computerChargeAttackDamage)
             game[user].chargeAttack = 0;
-            document.getElementById(`${user}Charge`).innerHTML = game[user].chargeAttack;
         }
     }
     if (chargeAttack == "reset") {
         switch (user) {
             case "player":
                 game.player.chargeAttack = 0;
-                document.getElementById(`playerCharge`).innerHTML = game.player.chargeAttack;
+                // document.getElementById(`playerCharge`).innerHTML = game.player.chargeAttack;
                 break;
             case "computer":
                 game.computer.chargeAttack = 0;
-                document.getElementById(`computerCharge`).innerHTML = game.computer.chargeAttack;
+                // document.getElementById(`computerCharge`).innerHTML = game.computer.chargeAttack;
                 break
             default:
                 break;
@@ -448,9 +447,9 @@ function resetPlayers() {
 }
 
 function startGame() {
-   document.getElementById("header").style.display = "none";
-   document.getElementById("main").style.display = "block";
-   document.getElementById("keyboard-div").style.display = "block";
+    document.getElementById("header").style.display = "none";
+    document.getElementById("main").style.display = "block";
+    document.getElementById("keyboard-div").style.display = "block";
     isRunning = true;
     // setSkillMode(skill);
     game.drawingLoop();
