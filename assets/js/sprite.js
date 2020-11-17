@@ -8,16 +8,16 @@ let keyArray = [];
 // letters = "ASDFGHJKL"; //;"
 // keyArray = letters.split("");
 
-let playerStartLife = 1000;
-let computerStartLife = 1000;
+let playerStartLife = 100;
+let computerStartLife = 100;
 
 let playerAttackToggle = false;
 let computerAttackToggle = false;
 
-let playerDamage = -20;
-let computerDamage = -20;
-let playerChargeAttackDamage = -50;
-let computerChargeAttackDamage = -20;
+let playerDamage = -5;
+let computerDamage = -5;
+let playerChargeAttackDamage = -20;
+let computerChargeAttackDamage = -10;
 
 let playerChargeAttackCounter = 3;
 let computerChargeAttackCounter = 3;
