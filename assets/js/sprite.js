@@ -339,29 +339,49 @@ function manageLife(user, damage, reset = 0) {
     }
 }
 
-function attackFunction(player) {
-    if (player === "player") {
+function attackFunction(user, attackType) {
+    if (user === "player" && attackType === "regular") {
         game.player.attack()
         let playerAttack = new Attack(65, 190, game.context, loader.images.player);
         game.playerAttackArr.push(playerAttack);
     }
-    if (player === "computer") {
+    if (user === "computer" && attackType === "regular") {
         game.computer.attack();
         let computerAttack = new Attack(650, 160, game.context, loader.images.computer);
         game.computerAttackArr.push(computerAttack);
     }
+
+    if (attackType === "charge") {
+        switch (user) {
+            case "player":
+                game.player.run()
+                playerAttackToggle = true
+                break;
+            case "computer":
+                game.computer.fly()
+                computerAttackToggle = true
+                break;
+
+            default:
+                break;
+        }
+    }
+    console.log(playerAttackToggle);
+    
+    console.log(computerAttackToggle);
+
 }
 
 //HANDLE SCORE ON KEYDOWN
 document.onkeydown = (e) => {
     game.tileArray.map((tile, i) => {
         if (e.key.toUpperCase() == tile.key) {
-            attackFunction("player")
+            attackFunction("player", "regular")
             handleKeyboard(e, "deactive")
             game.tileArray.splice(i, 1);
             checkScore();
         } else if (e.key.toUpperCase() !== tile.key) {
-            attackFunction("computer")
+            attackFunction("computer", "regular")
             checkScore();
         }
     })
@@ -411,28 +431,23 @@ function handleChargeAttack(user, chargeAttack) {
         if (chargeAttack === playerChargeAttackCounter) {
             manageLife("computer", playerChargeAttackDamage)
             game[user].chargeAttack = 0;
+            resetChargeAttack(user)
+            attackFunction(user,"charge")
         }
     }
     if (user === "computer" && Number(chargeAttack)) {
         document.getElementById(`${user}-charge-${chargeAttack}`).style.backgroundColor = 'blue';
         if (chargeAttack === computerChargeAttackCounter) {
-            manageLife("player", computerChargeAttackDamage)
+            // manageLife("player", computerChargeAttackDamage)
             game[user].chargeAttack = 0;
+            resetChargeAttack(user)
+            attackFunction(user,"charge")
+
         }
     }
-    if (chargeAttack == "reset") {
-        switch (user) {
-            case "player":
-                game.player.chargeAttack = 0;
-                // document.getElementById(`playerCharge`).innerHTML = game.player.chargeAttack;
-                break;
-            case "computer":
-                game.computer.chargeAttack = 0;
-                // document.getElementById(`computerCharge`).innerHTML = game.computer.chargeAttack;
-                break
-            default:
-                break;
-        }
+    if (chargeAttack === "reset") {
+        game[user].chargeAttack = 0;
+        resetChargeAttack(user)
     }
 }
 
@@ -442,12 +457,14 @@ function resetPlayers() {
         game.computer.idle();
         manageLife(0, 0, 1);
         game[user].chargeAttack = 0;
-        for (i = 1; i < 4; i++) {
-            // document.getElementById(`${user}-charge-${i}`).style.backgroundColor = '';
-            console.log(i)
-        }
-        // document.getElementById(`${user}Charge`).innerHTML = game[user].chargeAttack;
+        resetChargeAttack(user);
     })
+}
+
+function resetChargeAttack(user) {
+    for (i = 1; i < 4; i++) {
+        document.getElementById(`${user}-charge-${i}`).style.backgroundColor = '';
+    }
 }
 
 function startGame() {
@@ -505,6 +522,8 @@ const game = {
         frames++
         // Clear canvas
         game.context.clearRect(0, 0, game.canvas.width, game.canvas.height);
+        if(playerAttackToggle) game.player.x += 10
+        if(computerAttackToggle) game.computer.x -= 10
         game.player.x += 1;
         game.computer.x -= 1.5;
         if (game.player.x >= 65) {
