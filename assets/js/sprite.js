@@ -5,21 +5,28 @@ let frames = 0;
 let letters = "";
 let keyArray = [];
 
+// letters = "ASDFGHJKL"; //;"
+// keyArray = letters.split("");
+
 let playerStartLife = 1000;
 let computerStartLife = 1000;
 
-let playerChargeAttackDamage = -50;
-let computerChargeAttackDamage = -20;
-
 let playerAttackToggle = false;
 let computerAttackToggle = false;
+
+let playerDamage = -20;
+let computerDamage = -20;
+let playerChargeAttackDamage = -50;
+let computerChargeAttackDamage = -20;
 
 let playerChargeAttackCounter = 2;
 let computerChargeAttackCounter = 4;
 
 function background(setting, position) {
-    document.getElementById('gamecanvas').style.backgroundImage = `url('/assets/images/pokemon_${setting}_bg.png')`;
-    document.getElementById('gamecanvas').style.backgroundPosition = position;
+    document.getElementById("gamecanvas").style.backgroundImage = `url('/assets/images/pokemon_${setting}_bg.png')`;
+    document.getElementById("gamecanvas").style.backgroundPosition = position;
+    document.getElementById("skill-section").style.display = "block";
+    document.getElementById("start-section").style.display = "block";
     switch (setting) {
         case 'stadium':
             document.getElementById(`${setting}-bg`).style.border = '4px solid red';
@@ -29,22 +36,31 @@ function background(setting, position) {
             document.getElementById(`${setting}-bg`).style.border = '4px solid red';
             document.getElementById(`stadium-bg`).style.border = 'none';
             break;
-
         default:
             break;
     }
 }
 
 function setSkillMode(skill) {
+
+    document.getElementById(`skillSelector_${skill}`).style.border = '4px solid red';
+    
+
     switch (skill) {
         case "home":
             letters = "ASDFGHJKL"; //;"
+            document.getElementById(`skillSelector_top`).style.border = 'none';
+            document.getElementById(`skillSelector_bottom`).style.border = 'none';
             break;
         case "top":
             letters = "QWERTYUIOP"; //shift letters for hard mode :"
+            document.getElementById(`skillSelector_home`).style.border = 'none';
+            document.getElementById(`skillSelector_bottom`).style.border = 'none';
             break;
         case "bottom":
             letters = "ZXCVBNM"; //,./shift letters for hard mode <>?
+            document.getElementById(`skillSelector_top`).style.border = 'none';
+            document.getElementById(`skillSelector_home`).style.border = 'none';
             break;
     }
 
@@ -319,6 +335,7 @@ function manageLife(user, damage, reset = 0) {
     } else {
         game[user].life += damage;
         document.getElementById(`${user}Life`).innerHTML = game[user].life;
+        document.getElementById(`${user}Life`).style.width -= 10;
     }
 }
 
@@ -430,12 +447,12 @@ function resetPlayers() {
     })
 }
 
-function startGame(skill) {
+function startGame() {
    document.getElementById("header").style.display = "none";
    document.getElementById("main").style.display = "block";
    document.getElementById("keyboard-div").style.display = "block";
     isRunning = true;
-    setSkillMode(skill);
+    // setSkillMode(skill);
     game.drawingLoop();
     manageLife(0, 0, 1);
 }
@@ -511,7 +528,7 @@ const game = {
                 attack.x = 65
                 attack.width = 0
                 game.player.idle()
-                manageLife("computer", -1)
+                manageLife("computer", computerDamage)
                 shakeScreen();
                 setTimeout(() => {
                     game.computer.idle();
@@ -534,7 +551,7 @@ const game = {
                 setTimeout(() => {
                     game.player.idle();
                 }, 1000);
-                manageLife("player", -1)
+                manageLife("player", playerDamage)
                 handleChargeAttack("computer", game.computer.chargeAttack)
                 shakeScreen();
                 attack.x = 650

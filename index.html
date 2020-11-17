@@ -13,25 +13,64 @@
 <body>
 	<div id="header">
 		<img src="./assets/images/ptb-logo.png" class="logo">
-
-		<h2>Choose your background</h2>
-		<div class="background-picker">
-			<div id="stadium-bg"><a onclick="background('stadium','top')">
-					<img src="./assets/images/pokemon_stadium_bg.png"></a></div>
-			<div id="outdoor-bg"><a onclick="background('outdoor','bottom')">
-					<img src="./assets/images/pokemon_outdoor_bg.png"></a></div>
-		</div>
-		
-		<h2>Choose your skill</h2>
-		<div class="mode-selector">
-			<button id="start-button" onclick="startGame('home')">Home Row</button>
-			<button id="start-button" onclick="startGame('top')">Top Row</button>
-			<button id="start-button" onclick="startGame('bottom')">Bottom Row</button>
-		</div>
+		<section id="background-section">
+			<h2>Choose your background</h2>
+			<div class="background-picker">
+				<div id="stadium-bg">
+					<a onclick="background('stadium','top')">
+						<img src="./assets/images/pokemon_stadium_bg.png">
+					</a>
+				</div>
+				<div id="outdoor-bg">
+					<a onclick="background('outdoor','bottom')">
+						<img src="./assets/images/pokemon_outdoor_bg.png">
+					</a>
+				</div>
+			</div>
+		</section>
+		<section id="skill-section">
+			<h2>Choose a typing skill to practice</h2>
+			<div class="mode-selector">
+				<span id="skillSelector_home" onclick="setSkillMode('home')">Home Row</span>
+				<span id="skillSelector_top" onclick="setSkillMode('top')">Top Row</span>
+				<span id="skillSelector_bottom" onclick="setSkillMode('bottom')">Bottom Row</span>
+				<span id="skillSelector_words" disabled="disabled">Words (coming soon)</span>
+			</div>
+		</section>
+		<section id="start-section">
+			<button id="start-button" onclick="startGame()">Start Game</button>
+		</section>
 	</div>
 	<div id="main">
+
+		<table style="width: 100%;">
+			<tr>
+				<td>Player Life</td>
+				<td style="border: 1px solid black;">
+					<div id="playerLife" style="width: 300px; height: 20px; background-color: yellow;"></div>
+				</td>
+				<td>Computer Life</td>
+				<td style="border: 1px solid black;">
+					<div style="width: 300px; height: 20px; background-color: red;"></div>
+				</td>
+			</tr>
+			<tr>
+				<td>Player Charge</td>
+				<td class="charge-attack-row">
+					<div class="charge-attack" id="player-charge-1"></div>
+					<div class="charge-attack" id="player-charge-2"></div>
+					<div class="charge-attack" id="player-charge-3"></div>
+				</td>
+				<td>Computer Charge</td>
+				<td class="charge-attack-row">
+					<div class="charge-attack" id="computer-charge-1"></div>
+					<div class="charge-attack" id="computer-charge-2"></div>
+					<div class="charge-attack" id="computer-charge-3"></div>
+				</td>
+			</tr>
+		</table>
 		<div class="life">
-			Player Life <span id="playerLife"> </span>
+			<!-- Player Life <span id="playerLife"> </span> -->
 			Computer <span id="computerLife"> </span>
 		</div>
 
@@ -160,4 +199,5 @@
 		});
 	</script>
 </body>
+
 </html>

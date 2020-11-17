@@ -1,7 +1,7 @@
 #gamecanvas {
-    /* background-color: wheat; */
-    border: 1px black solid ;
-    background-size: cover;
+  /* background-color: wheat; */
+  border: 1px black solid;
+  background-size: cover;
 }
 
 #header {
@@ -9,18 +9,23 @@
 }
 
 #main {
-  display: none
+  display: none;
 }
 
 #keyboard-div {
-  display: none
+  display: none;
 }
 
 .logo {
   width: 200px;
 }
 
-.logo, .background-picker, .stadium-bg, .outdoor-bg, .mode-selector {
+.logo,
+.background-picker,
+.stadium-bg,
+.outdoor-bg,
+.mode-selector,
+#start-button {
   padding: 20px;
   margin: auto;
   flex-direction: row !important;
@@ -32,58 +37,77 @@
   width: 250px !important;
 }
 
-.mode-selector > button {
+#skill-section
+, #start-section  {
+  display: none;
+}
+
+.charge-attack-row {
+  display: flex;
+  flex-direction: row;
+}
+
+.charge-attack {
+  width: 20px;
+  height: 20px;
+  /* background-color: blue; */
+  border-radius: 50%;
+  border: 1px solid blue;
+}
+
+.mode-selector > span,
+#start-button {
   padding: 20px;
   color: blue;
   font-size: 1.7em;
 }
 
 .life {
-    padding: 30px;
-    flex-direction: row;
+  padding: 30px;
+  flex-direction: row;
 }
 
 .keyboard td {
-    border: 1px solid #dddddd;
-    padding: 20px;
+  border: 1px solid #dddddd;
+  padding: 20px;
 }
 
 .activeKey {
-    background-color: chocolate;
+  background-color: chocolate;
 }
 
 .deactiveKey {
-    background-color: none;
+  background-color: none;
 }
 
 /* Shake animation https://css-tricks.com/snippets/css/shake-css-keyframe-animation/ */
 
 .score-shake {
-    animation: shake 0.82s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
-    transform: translate3d(0, 0, 0);
-    backface-visibility: hidden;
-    perspective: 1000px;
+  animation: shake 0.82s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
+  transform: translate3d(0, 0, 0);
+  backface-visibility: hidden;
+  perspective: 1000px;
+}
+
+@keyframes shake {
+  10%,
+  90% {
+    transform: translate3d(-1px, 0, 0);
   }
 
-  @keyframes shake {
-    10%,
-    90% {
-      transform: translate3d(-1px, 0, 0);
-    }
-  
-    20%,
-    80% {
-      transform: translate3d(2px, 0, 0);
-    }
-  
-    30%,
-    50%,
-    70% {
-      transform: translate3d(-4px, 0, 0);
-    }
-  
-    40%,
-    60% {
-      transform: translate3d(4px, 0, 0);
-    }
+  20%,
+  80% {
+    transform: translate3d(2px, 0, 0);
   }
+
+  30%,
+  50%,
+  70% {
+    transform: translate3d(-4px, 0, 0);
+  }
+
+  40%,
+  60% {
+    transform: translate3d(4px, 0, 0);
+  }
+}
