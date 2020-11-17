@@ -1,3 +1,6 @@
+body {
+  text-align: center;
+}
 #gamecanvas {
   /* background-color: wheat; */
   border: 1px black solid;
