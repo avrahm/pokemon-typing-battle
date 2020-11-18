@@ -14,7 +14,7 @@
 	<div id="header">
 		<img src="./assets/images/ptb-logo.png" class="logo">
 		<section id="background-section">
-			<h2>Choose your background</h2>
+			<h3>Choose your background</h3>
 			<div class="background-picker">
 				<div id="stadium-bg">
 					<a onclick="background('stadium','top')">
@@ -29,12 +29,12 @@
 			</div>
 		</section>
 		<section id="skill-section">
-			<h2>Choose a typing skill to practice</h2>
+			<h3>Choose a typing skill to practice</h3>
 			<div class="mode-selector">
-				<span id="skillSelector_home" onclick="setSkillMode('home')">Home Row</span>
-				<span id="skillSelector_top" onclick="setSkillMode('top')">Top Row</span>
-				<span id="skillSelector_bottom" onclick="setSkillMode('bottom')">Bottom Row</span>
-				<span id="skillSelector_words" disabled="disabled">Words (coming soon)</span>
+				<button id="skillSelector_home" onclick="setSkillMode('home')">Home Row</button>
+				<button id="skillSelector_top" onclick="setSkillMode('top')">Top Row</button>
+				<button id="skillSelector_bottom" onclick="setSkillMode('bottom')">Bottom Row</button>
+				<button id="skillSelector_words" disabled="disabled">Small Words (coming soon)</button>
 			</div>
 		</section>
 		<section id="start-section">
@@ -44,17 +44,18 @@
 	<div id="main">
 
 		<table style="width: 100%;">
-			<tr>
-				<td>Player Life</td>
-				<td style="border: 1px solid black;">
+			<tr class="life-bar">
+				<td style="width: 120px;">Player Life</td>
+				<td style="border: 1px solid black; width: 200px;">
 					<div id="playerLife" style="width: 300px; height: 20px; background-color: yellow;"></div>
 				</td>
-				<td>Computer Life</td>
-				<td style="border: 1px solid black;">
+				<td rowspan="2"><img src="./assets/images/ptb-logo.png" style="width: 150px"></td>
+				<td style="width: 120px;">Computer Life</td>
+				<td style="border: 1px solid black; width: 200px;">
 					<div id="computerLife" style="width: 300px; height: 20px; background-color: red;"></div>
 				</td>
 			</tr>
-			<tr>
+			<tr class="charge-bar">
 				<td>Player Charge</td>
 				<td class="charge-attack-row" id="playerCharge">
 					<div class="charge-attack" id="player-charge-1"></div>
@@ -76,37 +77,9 @@
 			<canvas id="gamecanvas" width="800" height="300" style="border: 1px solid black; "></canvas>
 		</div>
 
-		<br />
-
-		<!-- <div>
-		<button type="button" onclick="game.player.walk()">Walk</button>
-		<button type="button" onclick="game.player.run()">Run</button>
-		<button type="button" onclick="game.player.idle()">Idle</button>
-		<button type="button" onclick="game.player.attack()">Shock</button>
-		<button type="button" onclick="game.player.hit()">Hit</button>
-		<button type="button" onclick="game.player.jump()">Jump</button>
-
-	</div>
-
-	<br />
-
-	<div>
-		<button type="button" onclick="game.computer.fly()">Fly</button>
-		<button type="button" onclick="game.computer.idle()">Idle</button>
-		<button type="button" onclick="game.computer.attack()">Attack</button>
-		<button type="button" onclick="game.computer.hit()">Hit</button>
-	</div>
-
-	<br />
-
-	<button type="button" onclick="background('stadium','top')">Battleground</button>
-	<button type="button" onclick="background('outdoor','bottom')">Outdoors</button>
-
-	<br /> -->
-		<div>
-			<button id="stop-button" onclick="stopGame()">Stop</button>
-			<button id="stop-button" onclick="pauseGame()">Pause</button>
-
+		<div id="gamecontrols">
+			<button id="stop-button" onclick="stopGame()">Stop/Reset Game</button>
+			<button id="stop-button" onclick="pauseGame()">Pause Game</button>
 		</div>
 
 	</div>
@@ -178,14 +151,22 @@
 
 			<tr>
 				<td colspan="4"></td>
-				<td id="space" colspan="7">SPACE</td>
+				<td id="space" colspan="7">SPACE (Pause Game)</td>
 				<td colspan="4"></td>
 			</tr>
 		</table>
 	</div>
 	<footer>
-		For my little dude, love dad!<br/>
+		For my little dude, love dad!<br />
 		Web Developer: <a href="https://www.avrahm.com" target="_blank">Avrahm Kleinholz</a>
+
+
+		<h6>
+			Disclaimer: Logo, character images, and character names of Pokémon are Trademarks of Nintendo. <br />
+			<a href="https://www.copyright.gov/fair-use/more-info.html" target="_blank">
+				Fair use for teaching and educational purposes.
+			</a>
+		</h6>
 	</footer>
 
 	<script>

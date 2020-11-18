@@ -8,6 +8,9 @@ let keyArray = [];
 // letters = "ASDFGHJKL"; //;"
 // keyArray = letters.split("");
 
+let playerStartPosition = 65;
+let computerStartPosition = 650;
+
 let playerStartLife = 100;
 let computerStartLife = 100;
 
@@ -25,6 +28,7 @@ let computerChargeAttackCounter = 3;
 function background(setting, position) {
     document.getElementById("gamecanvas").style.backgroundImage = `url('/assets/images/pokemon_${setting}_bg.png')`;
     document.getElementById("gamecanvas").style.backgroundPosition = position;
+    document.getElementsByClassName("logo")[0].style.width = "150px";
     document.getElementById("skill-section").style.display = "block";
     switch (setting) {
         case 'stadium':
@@ -246,6 +250,15 @@ class Player extends Sprite {
         this.ticksPerFrame = 15;
     }
 
+
+    headbutt() {
+        this.width = 62;
+        this.frames = 4;
+        this.frameIndex = 0;
+        this.row = 5;
+        this.ticksPerFrame = 8;
+    }
+
     thunder() {
         playerAttack = true;
         this.width = 30;
@@ -274,7 +287,7 @@ class Attack extends Sprite {
     }
 
     thunder() {
-        playerAttackToggle = true;
+        // playerAttackToggle = true;
         this.width = 40;
         this.height = 62;
         this.frames = 6;
@@ -284,7 +297,7 @@ class Attack extends Sprite {
     }
 
     fireball() {
-        computerAttackToggle = true;
+        // computerAttackToggle = true;
         this.width = 35;
         this.height = 88;
         this.frames = 8;
@@ -341,50 +354,53 @@ function manageLife(user, damage, reset = 0) {
 
 function attackFunction(user, attackType) {
     if (user === "player" && attackType === "regular") {
-        game.player.attack()
-        let playerAttack = new Attack(65, 190, game.context, loader.images.player);
+        game.player.attack();
+        let playerAttack = new Attack(playerStartPosition, 190, game.context, loader.images.player);
         game.playerAttackArr.push(playerAttack);
     }
     if (user === "computer" && attackType === "regular") {
         game.computer.attack();
-        let computerAttack = new Attack(650, 160, game.context, loader.images.computer);
+        let computerAttack = new Attack(computerStartPosition, 160, game.context, loader.images.computer);
         game.computerAttackArr.push(computerAttack);
     }
 
     if (attackType === "charge") {
         switch (user) {
             case "player":
-                game.player.run()
-                playerAttackToggle = true
+                // console.log("charge", user);
+                playerAttackToggle = true;
+                game.player.run();
                 break;
             case "computer":
-                game.computer.fly()
-                computerAttackToggle = true
+                // console.log("charge", user);
+                computerAttackToggle = true;
+                game.computer.fly();
                 break;
-
             default:
                 break;
         }
     }
-    console.log(playerAttackToggle);
-    
-    console.log(computerAttackToggle);
-
 }
 
-//HANDLE SCORE ON KEYDOWN
+//HANDLE KEYBOARD ON KEYDOWN
 document.onkeydown = (e) => {
-    game.tileArray.map((tile, i) => {
-        if (e.key.toUpperCase() == tile.key) {
-            attackFunction("player", "regular")
-            handleKeyboard(e, "deactive")
-            game.tileArray.splice(i, 1);
-            checkScore();
-        } else if (e.key.toUpperCase() !== tile.key) {
-            attackFunction("computer", "regular")
-            checkScore();
-        }
-    })
+    if (e.code === "Space") {
+        pauseGame();
+        e.preventDefault();
+    }
+    else {
+        game.tileArray.map((tile, i) => {
+            if (e.key.toUpperCase() == tile.key) {
+                attackFunction("player", "regular")
+                handleKeyboard(e, "deactive")
+                game.tileArray.splice(i, 1);
+                checkScore();
+            } else if (e.key.toUpperCase() !== tile.key) {
+                attackFunction("computer", "regular")
+                checkScore();
+            }
+        })
+    }
 }
 
 function checkScore() {
@@ -429,10 +445,10 @@ function handleChargeAttack(user, chargeAttack) {
     if (user === "player" && Number(chargeAttack)) {
         document.getElementById(`${user}-charge-${chargeAttack}`).style.backgroundColor = 'blue';
         if (chargeAttack === playerChargeAttackCounter) {
-            manageLife("computer", playerChargeAttackDamage)
+            // manageLife("computer", playerChargeAttackDamage)
             game[user].chargeAttack = 0;
             resetChargeAttack(user)
-            attackFunction(user,"charge")
+            attackFunction(user, "charge")
         }
     }
     if (user === "computer" && Number(chargeAttack)) {
@@ -441,7 +457,7 @@ function handleChargeAttack(user, chargeAttack) {
             // manageLife("player", computerChargeAttackDamage)
             game[user].chargeAttack = 0;
             resetChargeAttack(user)
-            attackFunction(user,"charge")
+            attackFunction(user, "charge")
 
         }
     }
@@ -480,7 +496,6 @@ function startGame() {
 function pauseGame() {
     isRunning = !isRunning
     game.drawingLoop();
-    console.log(isRunning)
 }
 
 function stopGame() {
@@ -522,17 +537,48 @@ const game = {
         frames++
         // Clear canvas
         game.context.clearRect(0, 0, game.canvas.width, game.canvas.height);
-        if(playerAttackToggle) game.player.x += 10
-        if(computerAttackToggle) game.computer.x -= 10
-        game.player.x += 1;
-        game.computer.x -= 1.5;
-        if (game.player.x >= 65) {
-            // game.player.idle(); 
-            game.player.x = 65
+
+        if (playerAttackToggle) {
+            game.player.x += 2
+            if (game.player.x >= game.context.width + 20) {
+                game.player.x = -25
+                playerAttackToggle = false; 
+                setTimeout(() => {
+                    game.player.idle();
+                    game.computer.idle();
+                }, 1500);
+            }
+            if (game.player.x >= game.computer.x - 10) {
+                game.player.headbutt()
+                game.computer.hit()
+                shakeScreen()
+            } 
         }
-        if (game.computer.x <= 650) {
-            // game.computer.idle(); 
-            game.computer.x = 650
+        if (computerAttackToggle) {
+            game.computer.x -= 2
+            if (game.computer.x <= -120) {
+                game.computer.x = 825
+                computerAttackToggle = false; 
+                setTimeout(() => {
+                    game.player.idle();
+                    game.computer.idle();
+                }, 1500);
+            }
+            if (game.computer.x <= game.player.x + 10) {
+                game.player.hit()
+                shakeScreen()
+            } 
+        }
+
+        if (isRunning) {
+            game.player.x += 1;
+            game.computer.x -= 1.5;
+        }
+        if (game.player.x >= playerStartPosition && !playerAttackToggle) {
+            game.player.x = playerStartPosition
+        }
+        if (game.computer.x <= computerStartPosition && !computerAttackToggle) {
+            game.computer.x = computerStartPosition
         }
         draw("player")
         draw("computer")
@@ -547,7 +593,7 @@ const game = {
                 game.player.chargeAttack++
                 game.computer.hit()
                 playerAttackToggle = false
-                attack.x = 65
+                attack.x = game.player.x
                 attack.width = 0
                 game.player.idle()
                 manageLife("computer", computerDamage)
@@ -555,7 +601,6 @@ const game = {
                 setTimeout(() => {
                     game.computer.idle();
                 }, 1000);
-
                 game.playerAttackArr.splice(i, 1)
                 handleChargeAttack("player", game.player.chargeAttack)
                 handleChargeAttack("computer", "reset")
@@ -570,17 +615,18 @@ const game = {
             if (attack.x === game.player.x) {
                 game.computer.chargeAttack++
                 game.player.hit();
-                setTimeout(() => {
-                    game.player.idle();
-                }, 1000);
-                manageLife("player", playerDamage)
-                handleChargeAttack("computer", game.computer.chargeAttack)
-                shakeScreen();
-                attack.x = 650
+                computerAttackToggle = false
+                attack.x = game.computer.x
                 attack.width = 0
                 game.computer.idle()
                 game.player.chargeAttack = 0
+                manageLife("player", playerDamage)
+                shakeScreen();
+                setTimeout(() => {
+                    game.player.idle();
+                }, 1000);
                 game.computerAttackArr.splice(i, 1)
+                handleChargeAttack("computer", game.computer.chargeAttack)
                 handleChargeAttack("player", "reset")
             }
         });
@@ -589,7 +635,7 @@ const game = {
             draw("tile", tile)
         })
 
-        if (frames % 150 === 0 && game.tileArray.length < 1) {
+        if (frames % 50 === 0 && game.tileArray.length < 1 && !computerAttackToggle && !playerAttackToggle) {
             game.spawnTile();
             game.player.idle();
             game.computer.idle();
@@ -599,8 +645,6 @@ const game = {
     },
 
     spawnTile() {
-        //right 535
-        //let 250
         let xAxisArr = [250, 535]
         let yAxis = 125;
         let rKey = keyArray[Math.floor(Math.random() * keyArray.length)];
