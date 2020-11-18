@@ -590,12 +590,12 @@ const game = {
             attack.x += 3
 
             if (attack.x === game.computer.x) {
+                if(!playerAttackToggle) game.player.idle()
                 game.player.chargeAttack++
                 game.computer.hit()
                 playerAttackToggle = false
                 attack.x = game.player.x
                 attack.width = 0
-                game.player.idle()
                 manageLife("computer", computerDamage)
                 shakeScreen();
                 setTimeout(() => {
@@ -613,12 +613,12 @@ const game = {
             attack.fireball();
             attack.x -= 3
             if (attack.x === game.player.x) {
+                if(!computerAttackToggle) game.computer.idle()
                 game.computer.chargeAttack++
                 game.player.hit();
                 computerAttackToggle = false
                 attack.x = game.computer.x
                 attack.width = 0
-                game.computer.idle()
                 game.player.chargeAttack = 0
                 manageLife("player", playerDamage)
                 shakeScreen();
