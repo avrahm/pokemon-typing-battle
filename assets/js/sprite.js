@@ -26,7 +26,6 @@ function background(setting, position) {
     document.getElementById("gamecanvas").style.backgroundImage = `url('/assets/images/pokemon_${setting}_bg.png')`;
     document.getElementById("gamecanvas").style.backgroundPosition = position;
     document.getElementById("skill-section").style.display = "block";
-    document.getElementById("start-section").style.display = "block";
     switch (setting) {
         case 'stadium':
             document.getElementById(`${setting}-bg`).style.border = '4px solid red';
@@ -45,6 +44,7 @@ function setSkillMode(skill) {
 
     document.getElementById(`skillSelector_${skill}`).style.border = '4px solid red';
 
+    document.getElementById("start-section").style.display = "block";
 
     switch (skill) {
         case "home":
