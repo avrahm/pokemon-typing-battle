@@ -10,6 +10,7 @@ body {
   /* background-color: wheat; */
   border: 1px black solid;
   background-size: cover;
+  /* width: 800; */
 }
 
 #header {
@@ -53,7 +54,6 @@ section {
 #start-section {
   display: none;
 }
-
 
 .charge-attack-row {
   display: flex;
@@ -127,5 +127,22 @@ footer {
   40%,
   60% {
     transform: translate3d(4px, 0, 0);
+  }
+}
+
+@media only screen and (max-width: 600px) {
+  body {
+    transform: scale(1);
+    transform-origin: 0 0;
+  }
+
+  #gamecanvas {
+    transform: scale(0.5);
+    transform-origin: 0 0;
+  }
+
+  #keyboard-div {
+    transform: scale(0.7);
+    transform-origin: 0 0;
   }
 }

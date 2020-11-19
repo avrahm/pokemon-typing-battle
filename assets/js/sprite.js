@@ -14,12 +14,14 @@ let computerStartPosition = 650;
 let playerStartLife = 100;
 let computerStartLife = 100;
 
+let startLife = 100;
+
 let playerAttackToggle = false;
 let computerAttackToggle = false;
 
 let playerDamage = -5;
 let computerDamage = -5;
-let playerChargeAttackDamage = -20;
+let playerChargeAttackDamage = -10;
 let computerChargeAttackDamage = -10;
 
 let playerChargeAttackCounter = 3;
@@ -340,27 +342,28 @@ function draw(type, obj = null) {
     }
 }
 
-function manageLife(user, damage, reset = 0) {
+function manageLife(user, damage, reset = false) {
     if (reset) {
         ["player", "computer"].map(user => {
-            document.getElementById(`${user}Life`).innerHTML = game[user].life;
+            document.getElementById(`${user}Life`).innerHTML = startLife;
+            document.getElementById(`${user}Life`).style.width = `${game[user].life}%`;
         })
     } else {
         game[user].life += damage;
         document.getElementById(`${user}Life`).innerHTML = game[user].life;
-        document.getElementById(`${user}Life`).style.width -= 10;
+        document.getElementById(`${user}Life`).style.width = `${game[user].life}%`;
     }
 }
 
 function attackFunction(user, attackType) {
     if (user === "player" && attackType === "regular") {
         game.player.attack();
-        let playerAttack = new Attack(playerStartPosition, 190, game.context, loader.images.player);
+        let playerAttack = new Attack(game.player.x, 190, game.context, loader.images.player);
         game.playerAttackArr.push(playerAttack);
     }
     if (user === "computer" && attackType === "regular") {
         game.computer.attack();
-        let computerAttack = new Attack(computerStartPosition, 160, game.context, loader.images.computer);
+        let computerAttack = new Attack(game.computer.x, 160, game.context, loader.images.computer);
         game.computerAttackArr.push(computerAttack);
     }
 
@@ -403,17 +406,6 @@ document.onkeydown = (e) => {
     }
 }
 
-function checkScore() {
-    if (game.player.life <= 0) {
-        console.log("Computer wins");
-        stopGame();
-    }
-    if (game.computer.life <= 0) {
-        console.log("Player wins!");
-        stopGame();
-    }
-}
-
 //HANDLE KEYBOARD
 function handleKeyboard(tile, status) {
     if (status === "active" || status === "deactive") {
@@ -445,7 +437,6 @@ function handleChargeAttack(user, chargeAttack) {
     if (user === "player" && Number(chargeAttack)) {
         document.getElementById(`${user}-charge-${chargeAttack}`).style.backgroundColor = 'blue';
         if (chargeAttack === playerChargeAttackCounter) {
-            // manageLife("computer", playerChargeAttackDamage)
             game[user].chargeAttack = 0;
             resetChargeAttack(user)
             attackFunction(user, "charge")
@@ -454,7 +445,6 @@ function handleChargeAttack(user, chargeAttack) {
     if (user === "computer" && Number(chargeAttack)) {
         document.getElementById(`${user}-charge-${chargeAttack}`).style.backgroundColor = 'blue';
         if (chargeAttack === computerChargeAttackCounter) {
-            // manageLife("player", computerChargeAttackDamage)
             game[user].chargeAttack = 0;
             resetChargeAttack(user)
             attackFunction(user, "charge")
@@ -483,6 +473,30 @@ function resetChargeAttack(user) {
     }
 }
 
+function resetGame(){
+    resetPlayers();
+    handleKeyboard(0, "reset");
+}
+
+
+function checkScore() {
+    if (game.player.life <= 0) {
+        console.log("Computer wins");
+        showWinner('Computer')
+        // stopGame();
+    }
+    if (game.computer.life <= 0) {
+        console.log("Player wins!");
+        showWinner('Player')
+        // stopGame();
+    }
+}
+
+function showWinner(user) {
+    stopGame()
+    document.getElementById('keyboard-div').innerHTML = `<h1>${user} Won!</h1>`;
+}
+
 function startGame() {
     document.getElementById("header").style.display = "none";
     document.getElementById("main").style.display = "block";
@@ -500,12 +514,11 @@ function pauseGame() {
 
 function stopGame() {
     isRunning = false;
-    resetPlayers();
-    handleKeyboard(0, "reset");
+    resetGame();
 
-    document.getElementById("header").style.display = "block";
-    document.getElementById("main").style.display = "none";
-    document.getElementById("keyboard-div").style.display = "none";
+    // document.getElementById("header").style.display = "block";
+    // document.getElementById("main").style.display = "none";
+    // document.getElementById("keyboard-div").style.display = "none";
     /// kill any request in progress
     game.drawingLoop ? cancelAnimationFrame : false;
 }
@@ -538,41 +551,45 @@ const game = {
         // Clear canvas
         game.context.clearRect(0, 0, game.canvas.width, game.canvas.height);
 
+        checkScore()
+
         if (playerAttackToggle) {
             game.player.x += 2
             if (game.player.x >= game.context.width + 20) {
                 game.player.x = -25
-                playerAttackToggle = false; 
+                playerAttackToggle = false;
                 setTimeout(() => {
                     game.player.idle();
                     game.computer.idle();
                 }, 1500);
             }
-            if (game.player.x >= game.computer.x - 10) {
-                game.player.headbutt()
-                game.computer.hit()
-                shakeScreen()
-            } 
+            if (Number(Math.floor(game.player.x)) <= Number(Math.floor(game.computer.x) + 2) && Number(Math.floor(game.player.x)) >= Number(Math.floor(game.computer.x) - 2)) {
+                manageLife("computer", playerChargeAttackDamage / 2)
+                game.player.headbutt();
+                game.computer.hit();
+                shakeScreen();
+            }
         }
         if (computerAttackToggle) {
             game.computer.x -= 2
             if (game.computer.x <= -120) {
                 game.computer.x = 825
-                computerAttackToggle = false; 
+                computerAttackToggle = false;
                 setTimeout(() => {
                     game.player.idle();
                     game.computer.idle();
                 }, 1500);
             }
-            if (game.computer.x <= game.player.x + 10) {
+            if (Number(Math.floor(game.computer.x)) <= Number(Math.floor(game.player.x) + 2) && Number(Math.floor(game.computer.x)) >= Number(Math.floor(game.player.x) - 2)) {
+                manageLife("player", computerChargeAttackDamage / 2)
                 game.player.hit()
                 shakeScreen()
-            } 
+            }
         }
 
         if (isRunning) {
-            game.player.x += 1;
-            game.computer.x -= 1.5;
+            game.player.x += 2;
+            game.computer.x -= 2.5;
         }
         if (game.player.x >= playerStartPosition && !playerAttackToggle) {
             game.player.x = playerStartPosition
@@ -589,8 +606,8 @@ const game = {
             attack.thunder();
             attack.x += 3
 
-            if (attack.x === game.computer.x) {
-                if(!playerAttackToggle) game.player.idle()
+            if (attack.x === game.computer.x && !playerAttackToggle) {
+                if (!playerAttackToggle) game.player.idle()
                 game.player.chargeAttack++
                 game.computer.hit()
                 playerAttackToggle = false
@@ -612,8 +629,8 @@ const game = {
             attack.update();
             attack.fireball();
             attack.x -= 3
-            if (attack.x === game.player.x) {
-                if(!computerAttackToggle) game.computer.idle()
+            if (attack.x === game.player.x && !computerAttackToggle) {
+                if (!computerAttackToggle) game.computer.idle()
                 game.computer.chargeAttack++
                 game.player.hit();
                 computerAttackToggle = false
@@ -635,7 +652,9 @@ const game = {
             draw("tile", tile)
         })
 
-        if (frames % 50 === 0 && game.tileArray.length < 1 && !computerAttackToggle && !playerAttackToggle) {
+        if (frames % 50 === 0 && game.tileArray.length < 1 && !computerAttackToggle && !playerAttackToggle 
+            && game.player.x === playerStartPosition && game.computer.x === computerStartPosition
+            ) {
             game.spawnTile();
             game.player.idle();
             game.computer.idle();
