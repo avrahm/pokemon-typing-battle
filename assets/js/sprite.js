@@ -346,7 +346,7 @@ function manageLife(user, damage, reset = false) {
     if (reset) {
         ["player", "computer"].map(user => {
             document.getElementById(`${user}Life`).innerHTML = startLife;
-            document.getElementById(`${user}Life`).style.width = `${game[user].life}%`;
+            document.getElementById(`${user}Life`).style.width = `${startLife}%`;
         })
     } else {
         game[user].life += damage;
@@ -392,17 +392,19 @@ document.onkeydown = (e) => {
         e.preventDefault();
     }
     else {
-        game.tileArray.map((tile, i) => {
-            if (e.key.toUpperCase() == tile.key) {
-                attackFunction("player", "regular")
-                handleKeyboard(e, "deactive")
-                game.tileArray.splice(i, 1);
-                checkScore();
-            } else if (e.key.toUpperCase() !== tile.key) {
-                attackFunction("computer", "regular")
-                checkScore();
-            }
-        })
+        if (!playerAttackToggle && !computerAttackToggle) {
+            game.tileArray.map((tile, i) => {
+                if (e.key.toUpperCase() == tile.key) {
+                    attackFunction("player", "regular")
+                    handleKeyboard(e, "deactive")
+                    game.tileArray.splice(i, 1);
+                    checkScore();
+                } else if (e.key.toUpperCase() !== tile.key) {
+                    attackFunction("computer", "regular")
+                    checkScore();
+                }
+            })
+        }
     }
 }
 
@@ -430,7 +432,7 @@ function shakeScreen() {
     document.querySelector("canvas").classList.add("score-shake");
     setTimeout(() => {
         document.querySelector("canvas").classList.remove("score-shake");
-    }, 600);
+    }, 300);
 }
 
 function handleChargeAttack(user, chargeAttack) {
@@ -461,7 +463,7 @@ function resetPlayers() {
     ["player", "computer"].map(user => {
         game.player.idle();
         game.computer.idle();
-        manageLife(0, 0, 1);
+        manageLife(user, 0, true);
         game[user].chargeAttack = 0;
         resetChargeAttack(user);
     })
@@ -473,9 +475,11 @@ function resetChargeAttack(user) {
     }
 }
 
-function resetGame(){
+function resetGame() {
     resetPlayers();
     handleKeyboard(0, "reset");
+    game.player.x = playerStartPosition;
+    game.computer.x = computerStartPosition;
 }
 
 
@@ -652,9 +656,9 @@ const game = {
             draw("tile", tile)
         })
 
-        if (frames % 50 === 0 && game.tileArray.length < 1 && !computerAttackToggle && !playerAttackToggle 
+        if (frames % 50 === 0 && game.tileArray.length < 1 && !computerAttackToggle && !playerAttackToggle
             && game.player.x === playerStartPosition && game.computer.x === computerStartPosition
-            ) {
+        ) {
             game.spawnTile();
             game.player.idle();
             game.computer.idle();
