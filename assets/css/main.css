@@ -13,6 +13,10 @@ body {
 
 #header {
   text-align: center;
+  border: 1px solid black;
+  background-color: rgb(145, 164, 248);
+  border-radius: 30px;
+  box-shadow: rgba(46, 46, 48, 0.39);
 }
 
 #main {
@@ -46,6 +50,7 @@ section {
 
 .background-picker > div > a > img {
   width: 250px !important;
+  max-width: 100%;
 }
 
 #skill-section,
@@ -75,7 +80,7 @@ section {
   font-size: 1.3em;
 }
 
-.keyboard td {
+#keyboard td {
   border: 1px solid #dddddd;
   padding: 10px;
   background-color: white;
@@ -84,10 +89,12 @@ section {
 .activeKey {
   background-color: rgba(255, 0, 0, 0.733) !important;
   color: white !important;
+  border: 3px solid rgba(255, 0, 0, 0.733);
 }
 
 .deactiveKey {
-  background-color: none;
+  background-color: "none";
+  border: "none";
 }
 
 footer {

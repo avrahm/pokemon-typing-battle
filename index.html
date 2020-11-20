@@ -20,21 +20,23 @@
 					<a onclick="background('stadium','top')">
 						<img src="./assets/images/pokemon_stadium_bg.png">
 					</a>
+					<h4>Battleground</h4>
 				</div>
 				<div id="outdoor-bg">
 					<a onclick="background('outdoor','bottom')">
 						<img src="./assets/images/pokemon_outdoor_bg.png">
 					</a>
+					<h4>Outdoor</h4>
 				</div>
 			</div>
 		</section>
 		<section id="skill-section">
 			<h3>Choose a typing skill to practice</h3>
 			<div class="mode-selector">
-				<button id="skillSelector_home" onclick="setSkillMode('home')">Home Row</button>
-				<button id="skillSelector_top" onclick="setSkillMode('top')">Top Row</button>
-				<button id="skillSelector_bottom" onclick="setSkillMode('bottom')">Bottom Row</button>
-				<button id="skillSelector_words" disabled="disabled">Small Words (coming soon)</button>
+				<a id="skillSelector_home" onclick="setSkillMode('home')">Home Row</a>
+				<a id="skillSelector_top" onclick="setSkillMode('top')">Top Row</a>
+				<a id="skillSelector_bottom" onclick="setSkillMode('bottom')">Bottom Row</a>
+				<a id="skillSelector_words" disabled="disabled">Small Words (coming soon)</a>
 			</div>
 		</section>
 		<section id="start-section">
@@ -84,7 +86,8 @@
 
 	</div>
 	<div id="keyboard-div" style="width: 100%; text-align: center;">
-		<table class="keyboard" style="margin: auto;">
+		<span id="winner"></span>
+		<table id="keyboard" style="margin: auto;">
 			<tr>
 				<td id="`">`</td>
 				<td id="1">1</td>

@@ -32,14 +32,13 @@ function background(setting, position) {
     document.getElementById("gamecanvas").style.backgroundPosition = position;
     document.getElementsByClassName("logo")[0].style.width = "150px";
     document.getElementById("skill-section").style.display = "block";
+    document.getElementById(`${setting}-bg`).setAttribute("class", `activeKey`)
     switch (setting) {
         case 'stadium':
-            document.getElementById(`${setting}-bg`).style.border = '4px solid red';
-            document.getElementById(`outdoor-bg`).style.border = 'none';
+            document.getElementById(`outdoor-bg`).setAttribute("class", `deactiveKey`)
             break;
         case 'outdoor':
-            document.getElementById(`${setting}-bg`).style.border = '4px solid red';
-            document.getElementById(`stadium-bg`).style.border = 'none';
+            document.getElementById(`stadium-bg`).setAttribute("class", `deactiveKey`)
             break;
         default:
             break;
@@ -48,25 +47,25 @@ function background(setting, position) {
 
 function setSkillMode(skill) {
 
-    document.getElementById(`skillSelector_${skill}`).style.border = '4px solid red';
+    document.getElementById(`skillSelector_${skill}`).setAttribute("class", `activeKey`);
 
     document.getElementById("start-section").style.display = "block";
 
     switch (skill) {
         case "home":
             letters = "ASDFGHJKL"; //;"
-            document.getElementById(`skillSelector_top`).style.border = 'none';
-            document.getElementById(`skillSelector_bottom`).style.border = 'none';
+            document.getElementById(`skillSelector_top`).setAttribute("class", `deactiveKey`);
+            document.getElementById(`skillSelector_bottom`).setAttribute("class", `deactiveKey`);
             break;
         case "top":
             letters = "QWERTYUIOP"; //shift letters for hard mode :"
-            document.getElementById(`skillSelector_home`).style.border = 'none';
-            document.getElementById(`skillSelector_bottom`).style.border = 'none';
+            document.getElementById(`skillSelector_home`).setAttribute("class", `deactiveKey`);
+            document.getElementById(`skillSelector_bottom`).setAttribute("class", `deactiveKey`);
             break;
         case "bottom":
             letters = "ZXCVBNM"; //,./shift letters for hard mode <>?
-            document.getElementById(`skillSelector_top`).style.border = 'none';
-            document.getElementById(`skillSelector_home`).style.border = 'none';
+            document.getElementById(`skillSelector_top`).setAttribute("class", `deactiveKey`);
+            document.getElementById(`skillSelector_home`).setAttribute("class", `deactiveKey`);
             break;
     }
 
@@ -422,7 +421,7 @@ function handleKeyboard(tile, status) {
     if (status === "reset") {
         game.tileArray.map((tile, i) => {
             game.tileArray.splice(i, 1);
-            document.getElementById(`${tile.key.toLowerCase()}`).setAttribute("class", `${status}Key`)
+            document.getElementById(`${tile.key.toLowerCase()}`).setAttribute("class", `deactiveKey`)
             // document.getElementById(tile.key).setAttribute("class", `clear`)
         })
     }
@@ -485,26 +484,35 @@ function resetGame() {
 
 function checkScore() {
     if (game.player.life <= 0) {
-        console.log("Computer wins");
+        // console.log("Computer wins");
         showWinner('Computer')
-        // stopGame();
     }
     if (game.computer.life <= 0) {
-        console.log("Player wins!");
+        // console.log("Player wins!");
         showWinner('Player')
-        // stopGame();
     }
 }
 
 function showWinner(user) {
-    stopGame()
-    document.getElementById('keyboard-div').innerHTML = `<h1>${user} Won!</h1>`;
+    document.getElementById('winner').innerHTML = `<h1>${user} Won!</h1>`;
+    document.getElementById("keyboard").style.display = "none";
+    resetGame();
+    pauseGame();
+    // stopGame();
+}
+
+function goBackHome() {
+    document.getElementById("header").style.display = "block";
+    document.getElementById("main").style.display = "none";
+    document.getElementById("keyboard-div").style.display = "none";
 }
 
 function startGame() {
     document.getElementById("header").style.display = "none";
+    document.getElementById("winner").style.display = "none";
     document.getElementById("main").style.display = "block";
     document.getElementById("keyboard-div").style.display = "block";
+    document.getElementById("keyboard").style.display = "block";
     isRunning = true;
     // setSkillMode(skill);
     game.drawingLoop();
@@ -519,10 +527,7 @@ function pauseGame() {
 function stopGame() {
     isRunning = false;
     resetGame();
-
-    // document.getElementById("header").style.display = "block";
-    // document.getElementById("main").style.display = "none";
-    // document.getElementById("keyboard-div").style.display = "none";
+    goBackHome()
     /// kill any request in progress
     game.drawingLoop ? cancelAnimationFrame : false;
 }
@@ -555,8 +560,6 @@ const game = {
         // Clear canvas
         game.context.clearRect(0, 0, game.canvas.width, game.canvas.height);
 
-        checkScore()
-
         if (playerAttackToggle) {
             game.player.x += 2
             if (game.player.x >= game.context.width + 20) {
@@ -572,6 +575,7 @@ const game = {
                 game.player.headbutt();
                 game.computer.hit();
                 shakeScreen();
+                checkScore();
             }
         }
         if (computerAttackToggle) {
@@ -588,6 +592,7 @@ const game = {
                 manageLife("player", computerChargeAttackDamage / 2)
                 game.player.hit()
                 shakeScreen()
+                checkScore();
             }
         }
 
@@ -625,6 +630,7 @@ const game = {
                 game.playerAttackArr.splice(i, 1)
                 handleChargeAttack("player", game.player.chargeAttack)
                 handleChargeAttack("computer", "reset")
+                checkScore();
             }
         });
 
@@ -649,6 +655,7 @@ const game = {
                 game.computerAttackArr.splice(i, 1)
                 handleChargeAttack("computer", game.computer.chargeAttack)
                 handleChargeAttack("player", "reset")
+                checkScore();
             }
         });
 
